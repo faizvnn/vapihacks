@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Jamie — Part 1 test</title>
+<style>
+  body { font: 15px system-ui, sans-serif; margin: 24px; max-width: 900px; }
+  button { font-size: 15px; padding: 8px 14px; margin-right: 6px; }
+  #log { background: #111; color: #ddd; padding: 12px; height: 420px; overflow: auto; font: 13px ui-monospace, monospace; white-space: pre-wrap; }
+  .final { color: #7f7; } .jamie { color: #f77; } .sys { color: #8af; }
+  input { width: 420px; padding: 7px; font-size: 14px; }
+</style>
+</head>
+<body>
+<h2>Jamie — voice loop test</h2>
+<p>
+  <button id="start">Start call</button>
+  <button id="stop">Stop</button>
+  <button id="say">Test say()</button>
+  <span id="status">idle</span>
+</p>
+<p>
+  <input id="sent" placeholder="Type a sentence → /debug/sentence (stage fallback)" />
+  <button id="send">Send</button>
+</p>
+<div id="log"></div>
+
+<script type="module">
+  import Vapi from "https://esm.sh/@vapi-ai/web";
+  const S = location.origin;
+  const log = (t, c = "") => { const d = document.createElement("div"); d.className = c; d.textContent = `${new Date().toLocaleTimeString()}  ${t}`; logEl.prepend(d); };
+  const logEl = document.getElementById("log");
+  const statusEl = document.getElementById("status");
+  const post = (p, b) => fetch(S + p, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(b) }).then(r => r.json());
+
+  const ws = new WebSocket(S.replace(/^http/, "ws") + "/live");
+  let vapi, callId;
+  ws.onmessage = (ev) => {
+    const e = JSON.parse(ev.data);
+    if (e.type === "transcript" && e.final) log(`SENTENCE ${e.id}: ${e.text}`, "final");
+    else if (e.type === "gate") log(`gate ${e.id} p=${e.p} passed=${e.passed}`, "sys");
+    else if (e.type === "jamie" && e.status === "speaking") {
+      log(`JAMIE${e.clientShouldSpeak ? " (client fallback)" : ""}: ${e.text}`, "jamie");
+      if (e.clientShouldSpeak && vapi) vapi.say(e.text, false);
+    } else if (e.type === "call") { statusEl.textContent = `${e.status} | control=${e.control}`; log(`call ${e.status} control=${e.control}`, "sys"); }
+  };
+
+  document.getElementById("start").onclick = async () => {
+    const { publicKey, assistant } = await (await fetch(S + "/assistant")).json();
+    if (!publicKey) return log("VAPI_PUBLIC_KEY missing in .env", "jamie");
+    vapi = new Vapi(publicKey);
+    vapi.on("message", (m) => {
+      if (m.type === "transcript" && m.transcriptType === "partial") statusEl.textContent = "… " + m.transcript;
+      if (["transcript", "speech-update", "status-update"].includes(m.type)) post("/vapi/client-message", { callId, message: m }).catch(() => {});
+    });
+    vapi.on("error", (e) => log("vapi error: " + JSON.stringify(e?.error ?? e), "jamie"));
+    vapi.on("call-end", () => log("call ended", "sys"));
+    log("starting call…", "sys");
+    try {
+      const call = await vapi.start(assistant);
+      callId = call?.id;
+      log(`call id ${callId} | controlUrl in start() result: ${!!call?.monitor?.controlUrl}`, "sys");
+      const r = await post("/vapi/register", { call });
+      log(`server control: ${r.controlUrl} via ${r.source}`, "sys");
+    } catch (e) { log("start failed: " + (e?.message ?? JSON.stringify(e)), "jamie"); }
+  };
+  document.getElementById("stop").onclick = () => vapi?.stop();
+  document.getElementById("say").onclick = () => post("/debug/say", { text: "Quick correction. According to Wikipedia, this is a test." }).then(r => log("say → " + JSON.stringify(r), "sys"));
+  const send = () => { const i = document.getElementById("sent"); post("/debug/sentence", { text: i.value }); i.value = ""; };
+  document.getElementById("send").onclick = send;
+  document.getElementById("sent").onkeydown = (e) => e.key === "Enter" && send();
+</script>
+</body>
+</html>
