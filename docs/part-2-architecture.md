@@ -1,6 +1,6 @@
 # Part 2 architecture: the fact-check brain
 
-Status: implementation in progress. The pipeline, provider adapters, debug server, and fixtures now exist. Typecheck/build, 22 pipeline tests, and 30 synthetic fixture expectations pass. Exa returned evidence in a live spike; Jev returned HTTP 403. Adapter/server integration tests and live accuracy/latency acceptance remain pending. The design below expands the README's Part 2 and preserves its public `Sentence`, `Event`, and `say(text)` contracts.
+Status: implemented and integration tested. Typecheck/build, 39 automated tests, 30 synthetic fixture expectations, the live three-sentence demo, and the live HTTP/WebSocket smoke pass. Both providers authenticate. Broad live runs remain sensitive to the strict search deadline; see [validation and integration notes](part-2-integration.md). The design below expands the README's Part 2 and preserves its public `Sentence`, `Event`, and `say(text)` contracts.
 
 ## Scope and runtime
 
@@ -146,15 +146,18 @@ These are initial engineering budgets, not measured performance:
 
 | Setting | Initial value | Purpose |
 |---|---:|---|
-| Gate timeout | 500 ms | Bound the first Jev call |
+| Gate timeout | 1,000 ms | Bound the first Jev call |
 | Search timeout | 900 ms | README requirement |
-| Verdict timeout | 500 ms | Bound the second Jev call |
-| Overall brain deadline | 2,000 ms | Cancel slow fact checks |
+| Verdict timeout | 1,000 ms | Bound the second Jev call |
+| Overall brain deadline | 3,000 ms | Cancel slow fact checks |
+| Boot warm-up timeout | 5,000 ms per provider | Allow cold connections before live input |
 | Gate threshold | 0.85 | Provisional; tune separately |
 | Voice threshold | 0.95 | Provisional conservative speech policy |
 | Voice cooldown | 10,000 ms | Bound interruption frequency |
 
 Each stage uses the lesser of its timeout and remaining overall budget. Pass cancellation through fetch and SDK request options, and explicitly disable SDK retries for this path; [SDK options](https://github.com/typesafe-ai/typesafe-sdk-js/blob/main/src/types.ts) expose cancellation, timeouts, and retry configuration. Enforce the overall deadline independently of transport behavior.
+
+Implementation adjustment: the original 500 ms Jev stage budgets caused transport timeouts during a real batch. Increase their ceilings to 1,000 ms and the overall ceiling to 3,000 ms, while retaining the specified 900 ms Exa deadline. Ceilings bound failures; they do not intentionally delay successful responses. Local `.env` is loaded before application modules and overrides inherited values; this fixes stale inherited credentials superseding the intended local key.
 
 `totalMs` measures admission through committed brain decision, excluding speech dispatch. Gate/evidence `ms` measure their respective stage; verdict-stage and speech latency are structured logs, since the existing wire schema has no fields for them. Card delivery may follow `totalMs` by the dispatch duration. Log `{ id, stage, ms, reason, verdict, confidence, speechSuppression }` with provider request IDs when available. Never log API keys.
 

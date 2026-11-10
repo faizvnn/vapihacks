@@ -7,13 +7,14 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "node --env-file-if-exists=.env --import tsx server/src/index.ts",
+    "dev": "node --import ./server/load-env.mjs --import tsx server/src/index.ts",
     "build": "tsc -p tsconfig.build.json",
-    "start": "node --env-file-if-exists=.env dist/src/index.js",
+    "start": "node --import ./server/load-env.mjs dist/src/index.js",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test server/test/*.test.ts",
-    "fixtures": "node --env-file-if-exists=.env --import tsx server/scripts/run-fixtures.ts",
-    "spike": "node --env-file-if-exists=.env --import tsx server/scripts/spike.ts"
+    "fixtures": "node --import ./server/load-env.mjs --import tsx server/scripts/run-fixtures.ts",
+    "spike": "node --import ./server/load-env.mjs --import tsx server/scripts/spike.ts",
+    "smoke": "node --import ./server/load-env.mjs --import tsx server/scripts/smoke.ts"
   },
   "dependencies": {
     "@typesafe-ai/sdk": "0.7.0",

@@ -25,7 +25,7 @@
   { "id": "false-06", "text": "A triangle has four sides.", "expectedGate": true, "expectedVerdict": "CONTRADICTED", "split": "tune" },
   { "id": "false-07", "text": "Berlin is the capital of France.", "expectedGate": true, "expectedVerdict": "CONTRADICTED", "split": "heldout" },
   { "id": "false-08", "text": "It landed on the Moon in 1972.", "context": ["We are discussing Apollo 11."], "expectedGate": true, "expectedVerdict": "CONTRADICTED", "split": "heldout" },
-  { "id": "unclear-01", "text": "The population of this city doubled last year.", "context": ["We are talking about cities."], "expectedGate": true, "expectedVerdict": "UNCLEAR", "split": "tune" },
+  { "id": "unclear-01", "text": "The population of this city doubled last year.", "context": ["We are talking about cities."], "expectedGate": false, "split": "tune" },
   { "id": "unclear-02", "text": "The current population of Berlin is exactly 4000000.", "expectedGate": true, "expectedVerdict": "UNCLEAR", "split": "tune" },
   { "id": "unclear-03", "text": "The current price of gold is exactly 3000 dollars per ounce.", "expectedGate": true, "expectedVerdict": "UNCLEAR", "split": "heldout" },
   { "id": "unclear-04", "text": "Paris is the capital of France and has exactly 5000000 residents today.", "expectedGate": true, "expectedVerdict": "UNCLEAR", "split": "heldout" }

@@ -18,10 +18,11 @@ export function createApp(options: {
   const app = Fastify({ logger: options.httpLogging ?? false, bodyLimit: 16384 });
   const logger: Logger = options.logger ?? ((record) => app.log.info(record));
   const bus = createBus(logger);
-  const makePipeline = () => createPipeline({ ...options, publish: bus.publish });
+  const makePipeline = () => createPipeline({ ...options, logger, publish: bus.publish });
   let pipeline = makePipeline();
   let closing = false;
-  let readiness = { jev: "pending", exa: "pending" };
+  const lifetime = new AbortController();
+  const readiness = { jev: "pending", exa: "pending" };
   let warming: Promise<void> | undefined;
   const closeLive = attachLive(app.server, bus);
 
@@ -47,8 +48,10 @@ export function createApp(options: {
     void pipeline.onSentence(s);
     return reply.code(202).send({ id: s.id });
   });
-  app.addHook("onClose", async () => {
+  // Terminate upgraded sockets before Fastify waits for the HTTP server to close.
+  app.addHook("preClose", async () => {
     closing = true;
+    lifetime.abort();
     pipeline.close();
     closeLive();
   });
@@ -60,16 +63,19 @@ export function createApp(options: {
       onSentence: (s: Sentence) => pipeline.onSentence(s),
       close: () => pipeline.close(),
     },
-    resetSession() { pipeline.close(); pipeline = makePipeline(); },
+    resetSession() {
+      if (closing) return;
+      pipeline.close(); pipeline = makePipeline();
+    },
     warmUp(): Promise<void> {
       if (warming) return warming;
       const s: Sentence = { id: "warmup", text: "Paris is the capital of France.", context: [], t: Date.now() };
       warming = Promise.all([
-        bounded((signal) => options.jev.gate(s, signal), options.config.gateTimeoutMs, "warmup_timeout")
+        bounded((signal) => options.jev.gate(s, signal), options.config.warmupTimeoutMs, "warmup_timeout", lifetime.signal)
           .then(() => { readiness.jev = "ready"; }, (error: unknown) => {
             readiness.jev = "unavailable"; logger({ stage: "warmup_jev", ...safeError(error) });
           }),
-        bounded((signal) => options.exa.search(s, signal), options.config.searchTimeoutMs, "warmup_timeout")
+        bounded((signal) => options.exa.search(s, signal), options.config.warmupTimeoutMs, "warmup_timeout", lifetime.signal)
           .then((evidence) => { readiness.exa = evidence ? "ready" : "no_evidence"; }, (error: unknown) => {
             readiness.exa = "unavailable"; logger({ stage: "warmup_exa", ...safeError(error) });
           }),

@@ -1,0 +1,406 @@
+{
+  "automated": {
+    "tests": 39,
+    "passed": 39,
+    "typecheck": "pass",
+    "build": "pass"
+  },
+  "syntheticFixtures": {
+    "evaluated": 30,
+    "mismatches": 0,
+    "modelAccuracyMeasurement": false
+  },
+  "configuration": {
+    "model": "jev-1.13.0",
+    "gateThreshold": 0.85,
+    "voiceThreshold": 0.95,
+    "gateTimeoutMs": 1000,
+    "searchTimeoutMs": 900,
+    "verdictTimeoutMs": 1000,
+    "totalTimeoutMs": 3000,
+    "warmupTimeoutMs": 5000
+  },
+  "liveDemo": {
+    "summary": {
+      "mode": "live",
+      "measuredAt": "2026-11-10T03:28:59.274Z",
+      "model": "jev-1.13.0",
+      "thresholds": {
+        "gate": 0.85,
+        "voice": 0.95
+      },
+      "evaluated": 3,
+      "completedChecks": 2,
+      "p50Ms": 899.3,
+      "p95Ms": 955.5,
+      "failures": 0,
+      "dropped": 0,
+      "ignored": 1,
+      "duplicates": 0,
+      "falseSpoken": 0,
+      "mismatches": 0,
+      "failureCounts": {},
+      "splitMetrics": {
+        "tune": {
+          "evaluated": 3,
+          "matches": 3
+        },
+        "heldout": {
+          "evaluated": 0,
+          "matches": 0
+        }
+      },
+      "warmup": {
+        "jev": "ready",
+        "exa": "ready"
+      },
+      "gateThresholdEvaluation": [
+        {
+          "threshold": 0.7,
+          "evaluated": 3,
+          "errors": 0
+        },
+        {
+          "threshold": 0.8,
+          "evaluated": 3,
+          "errors": 0
+        },
+        {
+          "threshold": 0.85,
+          "evaluated": 3,
+          "errors": 0
+        },
+        {
+          "threshold": 0.9,
+          "evaluated": 3,
+          "errors": 0
+        },
+        {
+          "threshold": 0.95,
+          "evaluated": 3,
+          "errors": 0
+        }
+      ],
+      "voiceThresholdEvaluation": [
+        {
+          "threshold": 0.85,
+          "candidatesBeforeCooldownAndExcerptChecks": 1,
+          "falseCandidates": 0
+        },
+        {
+          "threshold": 0.9,
+          "candidatesBeforeCooldownAndExcerptChecks": 1,
+          "falseCandidates": 0
+        },
+        {
+          "threshold": 0.95,
+          "candidatesBeforeCooldownAndExcerptChecks": 1,
+          "falseCandidates": 0
+        },
+        {
+          "threshold": 0.98,
+          "candidatesBeforeCooldownAndExcerptChecks": 1,
+          "falseCandidates": 0
+        },
+        {
+          "threshold": 0.99,
+          "candidatesBeforeCooldownAndExcerptChecks": 1,
+          "falseCandidates": 0
+        }
+      ],
+      "realVoiceDispatched": false
+    },
+    "rows": [
+      {
+        "id": "banter-01",
+        "split": "tune",
+        "p": 0.02,
+        "expected": "IGNORED",
+        "verdict": "IGNORED",
+        "confidence": null,
+        "spoken": false,
+        "gateMs": 257,
+        "searchMs": 0,
+        "verdictMs": 0,
+        "totalMs": null,
+        "reason": "not_a_claim",
+        "match": true
+      },
+      {
+        "id": "true-01",
+        "split": "tune",
+        "p": 0.98,
+        "expected": "CONFIRMED",
+        "verdict": "CONFIRMED",
+        "confidence": 1,
+        "spoken": false,
+        "gateMs": 236,
+        "searchMs": 308,
+        "verdictMs": 412,
+        "totalMs": 956,
+        "reason": "not_contradicted",
+        "match": true
+      },
+      {
+        "id": "false-01",
+        "split": "tune",
+        "p": 0.97,
+        "expected": "CONTRADICTED",
+        "verdict": "CONTRADICTED",
+        "confidence": 1,
+        "spoken": true,
+        "gateMs": 245,
+        "searchMs": 308,
+        "verdictMs": 346,
+        "totalMs": 899,
+        "reason": "",
+        "match": true
+      }
+    ]
+  },
+  "liveBatch": {
+    "summary": {
+      "mode": "live",
+      "measuredAt": "2026-11-10T03:30:37.142Z",
+      "model": "jev-1.13.0",
+      "thresholds": {
+        "gate": 0.85,
+        "voice": 0.95
+      },
+      "evaluated": 30,
+      "completedChecks": 14,
+      "p50Ms": 984.7,
+      "p95Ms": 1797.5,
+      "failures": 5,
+      "dropped": 0,
+      "ignored": 11,
+      "duplicates": 0,
+      "falseSpoken": 0,
+      "mismatches": 8,
+      "failureCounts": {
+        "search_timeout": 5
+      },
+      "splitMetrics": {
+        "tune": {
+          "evaluated": 21,
+          "matches": 16
+        },
+        "heldout": {
+          "evaluated": 9,
+          "matches": 6
+        }
+      },
+      "warmup": {
+        "jev": "ready",
+        "exa": "ready"
+      },
+      "gateThresholdEvaluation": [
+        {
+          "threshold": 0.7,
+          "evaluated": 21,
+          "errors": 0
+        },
+        {
+          "threshold": 0.8,
+          "evaluated": 21,
+          "errors": 0
+        },
+        {
+          "threshold": 0.85,
+          "evaluated": 21,
+          "errors": 0
+        },
+        {
+          "threshold": 0.9,
+          "evaluated": 21,
+          "errors": 0
+        },
+        {
+          "threshold": 0.95,
+          "evaluated": 21,
+          "errors": 1
+        }
+      ],
+      "voiceThresholdEvaluation": [
+        {
+          "threshold": 0.85,
+          "candidatesBeforeCooldownAndExcerptChecks": 7,
+          "falseCandidates": 1
+        },
+        {
+          "threshold": 0.9,
+          "candidatesBeforeCooldownAndExcerptChecks": 6,
+          "falseCandidates": 0
+        },
+        {
+          "threshold": 0.95,
+          "candidatesBeforeCooldownAndExcerptChecks": 6,
+          "falseCandidates": 0
+        },
+        {
+          "threshold": 0.98,
+          "candidatesBeforeCooldownAndExcerptChecks": 6,
+          "falseCandidates": 0
+        },
+        {
+          "threshold": 0.99,
+          "candidatesBeforeCooldownAndExcerptChecks": 6,
+          "falseCandidates": 0
+        }
+      ],
+      "realVoiceDispatched": false
+    },
+    "mismatches": [
+      {
+        "id": "true-01",
+        "split": "tune",
+        "p": 0.98,
+        "expected": "CONFIRMED",
+        "verdict": "UNCLEAR",
+        "confidence": 0,
+        "spoken": false,
+        "gateMs": 310,
+        "searchMs": 914,
+        "verdictMs": 0,
+        "totalMs": 1225,
+        "reason": "search_timeout",
+        "match": false
+      },
+      {
+        "id": "true-03",
+        "split": "tune",
+        "p": 0.98,
+        "expected": "CONFIRMED",
+        "verdict": "UNCLEAR",
+        "confidence": 0,
+        "spoken": false,
+        "gateMs": 263,
+        "searchMs": 903,
+        "verdictMs": 0,
+        "totalMs": 1166,
+        "reason": "search_timeout",
+        "match": false
+      },
+      {
+        "id": "true-05",
+        "split": "tune",
+        "p": 0.97,
+        "expected": "CONFIRMED",
+        "verdict": "UNCLEAR",
+        "confidence": 0,
+        "spoken": false,
+        "gateMs": 288,
+        "searchMs": 906,
+        "verdictMs": 0,
+        "totalMs": 1194,
+        "reason": "search_timeout",
+        "match": false
+      },
+      {
+        "id": "true-06",
+        "split": "tune",
+        "p": 0.98,
+        "expected": "CONFIRMED",
+        "verdict": "UNCLEAR",
+        "confidence": 0,
+        "spoken": false,
+        "gateMs": 238,
+        "searchMs": 912,
+        "verdictMs": 0,
+        "totalMs": 1149,
+        "reason": "search_timeout",
+        "match": false
+      },
+      {
+        "id": "true-07",
+        "split": "heldout",
+        "p": 0.97,
+        "expected": "CONFIRMED",
+        "verdict": "UNCLEAR",
+        "confidence": 0,
+        "spoken": false,
+        "gateMs": 294,
+        "searchMs": 912,
+        "verdictMs": 0,
+        "totalMs": 1206,
+        "reason": "search_timeout",
+        "match": false
+      },
+      {
+        "id": "unclear-02",
+        "split": "tune",
+        "p": 0.98,
+        "expected": "UNCLEAR",
+        "verdict": "CONTRADICTED",
+        "confidence": 0.86,
+        "spoken": false,
+        "gateMs": 350,
+        "searchMs": 289,
+        "verdictMs": 266,
+        "totalMs": 906,
+        "reason": "low_confidence",
+        "match": false
+      },
+      {
+        "id": "unclear-03",
+        "split": "heldout",
+        "p": 0.97,
+        "expected": "UNCLEAR",
+        "verdict": "CONTRADICTED",
+        "confidence": 0.96,
+        "spoken": false,
+        "gateMs": 251,
+        "searchMs": 375,
+        "verdictMs": 255,
+        "totalMs": 881,
+        "reason": "no_safe_excerpt",
+        "match": false
+      },
+      {
+        "id": "unclear-04",
+        "split": "heldout",
+        "p": 0.97,
+        "expected": "UNCLEAR",
+        "verdict": "CONTRADICTED",
+        "confidence": 0.94,
+        "spoken": false,
+        "gateMs": 356,
+        "searchMs": 309,
+        "verdictMs": 248,
+        "totalMs": 913,
+        "reason": "low_confidence",
+        "match": false
+      }
+    ]
+  },
+  "httpWebSocketSmoke": {
+    "measuredAt": "2026-11-10T03:26:51.207Z",
+    "passed": true,
+    "outcomes": [
+      {
+        "type": "verdict",
+        "id": "b802190e-df8a-4a62-8ddb-449aafbf72d0",
+        "verdict": "CONFIRMED",
+        "confidence": 1,
+        "spoken": false,
+        "totalMs": 1062.6551
+      },
+      {
+        "type": "verdict",
+        "id": "7887adfd-fa1d-412b-9c63-abe652f0b68b",
+        "verdict": "CONTRADICTED",
+        "confidence": 1,
+        "spoken": true,
+        "totalMs": 816.2211000000002
+      }
+    ],
+    "correctionsRecordedByTestSpeaker": 1,
+    "realVoiceDispatched": false
+  },
+  "limitations": [
+    "The full live batch is not a passing accuracy evaluation.",
+    "Completed-check percentiles exclude gated-out inputs and transport failures; inspect coverage alongside latency.",
+    "No real Vapi audio was exercised.",
+    "Thresholds were compared on the tuning split; time-sensitive heldout judgments still differed from conservative labels."
+  ]
+}

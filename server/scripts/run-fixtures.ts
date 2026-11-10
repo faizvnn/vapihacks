@@ -3,7 +3,7 @@ import { loadConfig, pipelineDefaults } from "../src/config.js";
 import { createExa } from "../src/exa.js";
 import { createJev } from "../src/jev.js";
 import { createPipeline } from "../src/pipeline.js";
-import type { Event, LogRecord, VerdictLabel } from "../src/types.js";
+import type { Event, LogRecord } from "../src/types.js";
 import { fixtureProviders, loadFixtures } from "./fixture-support.js";
 
 export function percentile(values: number[], fraction: number): number | null {
@@ -68,12 +68,35 @@ async function main() {
   } finally { pipeline.close(); }
   const completed = events.filter((event) => event.type === "verdict" && event.confidence > 0);
   const times = completed.map((event) => event.type === "verdict" ? event.totalMs : 0);
+  const failureCounts: Record<string, number> = {};
+  for (const record of logs) {
+    if (record.stage === "complete" && record.reason && !["not_a_claim", "no_evidence"].includes(record.reason)) {
+      failureCounts[record.reason] = (failureCounts[record.reason] ?? 0) + 1;
+    }
+  }
+  const splitMetrics = Object.fromEntries(["tune", "heldout"].map((split) => {
+    const selected = rows.filter((row) => row.split === split);
+    return [split, { evaluated: selected.length, matches: selected.filter((row) => row.match).length }];
+  }));
+  // Compare thresholds on the tuning split only. This does not automatically retune production.
+  const tuningRows = rows.filter((row) => row.split === "tune");
+  const gateThresholdEvaluation = [0.7, 0.8, 0.85, 0.9, 0.95].map((threshold) => ({
+    threshold,
+    evaluated: tuningRows.filter((row) => typeof row.p === "number").length,
+    errors: tuningRows.filter((row) => typeof row.p === "number"
+      && (row.p >= threshold) !== Boolean(fixtures.find((fixture) => fixture.id === row.id)?.expectedGate)).length,
+  }));
+  const voiceThresholdEvaluation = [0.85, 0.9, 0.95, 0.98, 0.99].map((threshold) => {
+    const eligible = tuningRows.filter((row) => row.verdict === "CONTRADICTED" && typeof row.confidence === "number" && row.confidence > threshold);
+    return { threshold, candidatesBeforeCooldownAndExcerptChecks: eligible.length, falseCandidates: eligible.filter((row) => row.expected !== "CONTRADICTED").length };
+  });
   const summary = {
     mode: live ? "live" : "mock (synthetic responses; NOT model accuracy)",
     measuredAt: new Date().toISOString(), model: live ? loadConfig().jevModel : "synthetic",
     thresholds: { gate: config.gateThreshold, voice: config.voiceThreshold },
     evaluated: fixtures.length, completedChecks: times.length,
-    p50Ms: percentile(times, 0.5), p95Ms: percentile(times, 0.95), ...counts, warmup,
+    p50Ms: percentile(times, 0.5), p95Ms: percentile(times, 0.95), ...counts, failureCounts, splitMetrics, warmup,
+    gateThresholdEvaluation, voiceThresholdEvaluation,
     realVoiceDispatched: false,
   };
   console.table(rows);

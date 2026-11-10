@@ -31,11 +31,18 @@ export function validJudgment(value: unknown): value is Judgment {
   if (!isRecord(value) || !verdictLabels.includes(value.verdict as VerdictLabel)
     || !probability(value.confidence) || !isRecord(value.probabilities)) return false;
   const probabilities = value.probabilities;
-  return verdictLabels.every((label) => probability(probabilities[label]));
+  if (!verdictLabels.every((label) => probability(probabilities[label]))) return false;
+  const values = verdictLabels.map((label) => probabilities[label] as number);
+  const selected = probabilities[value.verdict as VerdictLabel] as number;
+  return Math.abs(values.reduce((sum, p) => sum + p, 0) - 1) <= 0.02
+    && values.every((p) => selected >= p - 1e-6);
 }
 export function safeError(error: unknown): { reason: string; status?: number } {
   if (error instanceof PipelineError) return { reason: error.reason, status: error.status };
   // Never serialize provider errors: their messages/bodies may contain input or credentials.
-  if (isRecord(error) && typeof error.status === "number") return { reason: "provider_http_error", status: error.status };
+  if (isRecord(error) && typeof error.status === "number") {
+    const detail = isRecord(error.body) && isRecord(error.body.detail) ? error.body.detail : undefined;
+    return { reason: detail?.error_type === "authentication_error" ? "provider_authentication_error" : "provider_http_error", status: error.status };
+  }
   return { reason: "provider_error" };
 }

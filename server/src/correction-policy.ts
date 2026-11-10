@@ -7,7 +7,9 @@ export function correctionLine(evidence: Evidence): string | null {
   if (!validEvidence(evidence)) return null;
   const segmenter = new Intl.Segmenter("en", { granularity: "sentence" });
   const first = segmenter.segment(evidence.highlight.trim())[Symbol.iterator]().next().value?.segment.trim();
-  if (!first || !/[.!?]["')\]]?$/.test(first) || first.split(/\s+/).length > 25) return null;
+  if (!first || !/[.!?]["')\]]?$/.test(first)) return null;
+  const words = first.split(/\s+/).length;
+  if (words < 3 || words > 25) return null;
   // Conservative extractive speech: don't read a dangling reference, fragment, command, or quotation.
   if (!/^[A-Z0-9]/.test(first) || /^(?:it|its|they|their|he|his|she|her|this|that|these|those|and|but|according|ignore|say|please)\b/i.test(first)
     || /(?:\.\.\.|…|https?:\/\/|[\r\n])/.test(first) || /[?:!]$/.test(first)) return null;

@@ -1,11 +1,12 @@
 export const pipelineDefaults = {
   gateThreshold: 0.85,
   voiceThreshold: 0.95,
-  gateTimeoutMs: 500,
+  gateTimeoutMs: 1000,
   searchTimeoutMs: 900,
-  verdictTimeoutMs: 500,
-  totalTimeoutMs: 2000,
+  verdictTimeoutMs: 1000,
+  totalTimeoutMs: 3000,
   speechTimeoutMs: 1500,
+  warmupTimeoutMs: 5000,
   voiceCooldownMs: 10000,
   maxInFlight: 3,
   dedupTtlMs: 300000,
@@ -51,6 +52,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     verdictTimeoutMs: number("VERDICT_TIMEOUT_MS", pipelineDefaults.verdictTimeoutMs),
     totalTimeoutMs: number("TOTAL_TIMEOUT_MS", pipelineDefaults.totalTimeoutMs),
     speechTimeoutMs: number("SPEECH_TIMEOUT_MS", pipelineDefaults.speechTimeoutMs),
+    warmupTimeoutMs: number("WARMUP_TIMEOUT_MS", pipelineDefaults.warmupTimeoutMs),
     voiceCooldownMs: number("VOICE_COOLDOWN_MS", pipelineDefaults.voiceCooldownMs),
     maxInFlight: number("MAX_IN_FLIGHT", pipelineDefaults.maxInFlight),
   });

@@ -1,13 +1,14 @@
 # Jamie — Live Podcast Fact Checker: Build Plan
 
-## Part 2 implementation snapshot
+## Run Part 2
 
 Part 2 is implemented as a TypeScript pipeline with Jev/Exa adapters, bounded concurrency,
 cancellation, deduplication, a correction policy, `POST /debug/sentence`, and WS `/live`.
 Part 1's audio loop and Part 3's dashboard are not implemented in this branch.
 
 Requires Node 22+ and npm. Put `TYPESAFE_API_KEY` and `EXA_API_KEY` in local `.env`
-(see `.env.example`; `.env` is ignored by Git).
+(see `.env.example`; `.env` is ignored by Git). Local `.env` values take precedence
+over inherited environment variables so stale keys from the launching terminal cannot override them.
 
 ```powershell
 npm install
@@ -29,17 +30,28 @@ provider warm-up status. Real speech requires injecting Part 1's `say(text)` int
 `createApp` in `server/src/app.ts`; the standalone server never pretends to have spoken.
 Use its `pipeline.onSentence` facade for transcripts and `resetSession()` before each new call.
 
-Verification at this snapshot: typecheck/build pass, 22 pipeline tests pass, and all 30
-synthetic fixture expectations pass. Mock fixtures verify orchestration, not model accuracy.
+Verification: typecheck/build pass, 39 tests pass (pipeline, adapters, HTTP, real WebSocket
+connections, shutdown and configuration), and all 30 synthetic fixture expectations pass.
+Mock fixtures verify orchestration, not model accuracy.
 `npm run fixtures` writes a synthetic replay to `fixtures/events.json` for Part 3.
 Local reports go to ignored `outputs/`.
 
-Live spike: Exa authenticated and returned a highlight (first search approximately 1.4 s).
-Jev gate and verdict both returned HTTP 403; live accuracy, threshold tuning, and the
-sub-second latency target remain unverified. Server/WebSocket and adapter integration
-tests are still pending. Run `npm run spike` to recheck provider access, or
-`npm run fixtures -- --live --demo` for the three initial demo fixtures once access works.
-The runner uses a mock speaker in both modes and never dispatches real audio.
+Jev and Exa now authenticate successfully. The live three-sentence demo passed: ignored banter,
+confirmed a true claim, and contradicted a false claim with a citation. The live HTTP/WS
+smoke also passed, including one correction dispatched to a recording test speaker.
+
+```powershell
+npm run spike
+npm run fixtures -- --live --demo
+npm run fixtures -- --live
+npm run smoke
+```
+
+Both live fixture mode and smoke mode use a test speaker and never invoke Vapi. The full
+fixture runner exits nonzero on mismatches and prints tuning/heldout results, timeout counts,
+latency percentiles, and separate threshold comparisons on the tuning split. Broad live runs
+can produce `UNCLEAR` when Exa exceeds the 900 ms deadline. See
+[integration and validation notes](docs/part-2-integration.md) for exact limits and handoff details.
 
 ---
 

@@ -38,7 +38,7 @@ export function createJev(
       }, { signal, retry: { maxRetries: 0 } }).withResponse();
       log(s.id, requestId);
       const p = data.answers?.is_claim?.noul;
-      if (!probability(p)) throw new PipelineError("invalid_gate_response");
+      if (data.answers?.is_claim?.type !== "noul" || !probability(p)) throw new PipelineError("invalid_gate_response");
       return { p };
     },
     async judge(s, evidence, signal) {
@@ -49,7 +49,7 @@ export function createJev(
       log(s.id, requestId);
       const answer = data.answers?.verdict;
       const judgment = { verdict: answer?.choice, confidence: answer?.confidence, probabilities: answer?.probabilities };
-      if (!validJudgment(judgment)) throw new PipelineError("invalid_verdict_response");
+      if (answer?.type !== "choice" || !validJudgment(judgment)) throw new PipelineError("invalid_verdict_response");
       return judgment;
     },
   };

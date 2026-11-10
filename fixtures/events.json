@@ -10,7 +10,7 @@
     "id": "banter-01",
     "p": 0.05,
     "passed": false,
-    "ms": 0.41859999999999786
+    "ms": 0.7334999999999923
   },
   {
     "type": "transcript",
@@ -23,7 +23,7 @@
     "id": "banter-02",
     "p": 0.05,
     "passed": false,
-    "ms": 0.05570000000000164
+    "ms": 0.09390000000001919
   },
   {
     "type": "transcript",
@@ -36,7 +36,7 @@
     "id": "banter-03",
     "p": 0.05,
     "passed": false,
-    "ms": 0.03900000000001569
+    "ms": 0.1127999999999929
   },
   {
     "type": "transcript",
@@ -49,7 +49,7 @@
     "id": "banter-04",
     "p": 0.05,
     "passed": false,
-    "ms": 0.04810000000000514
+    "ms": 0.1063000000000045
   },
   {
     "type": "transcript",
@@ -62,7 +62,7 @@
     "id": "banter-05",
     "p": 0.05,
     "passed": false,
-    "ms": 0.07400000000001228
+    "ms": 0.15229999999999677
   },
   {
     "type": "transcript",
@@ -75,7 +75,7 @@
     "id": "banter-06",
     "p": 0.05,
     "passed": false,
-    "ms": 0.02939999999998122
+    "ms": 0.08679999999998245
   },
   {
     "type": "transcript",
@@ -88,7 +88,7 @@
     "id": "banter-07",
     "p": 0.05,
     "passed": false,
-    "ms": 0.07869999999999777
+    "ms": 0.03609999999997626
   },
   {
     "type": "transcript",
@@ -101,7 +101,7 @@
     "id": "banter-08",
     "p": 0.05,
     "passed": false,
-    "ms": 0.04460000000000264
+    "ms": 0.033299999999997
   },
   {
     "type": "transcript",
@@ -114,7 +114,7 @@
     "id": "banter-09",
     "p": 0.05,
     "passed": false,
-    "ms": 0.03909999999999059
+    "ms": 0.04210000000000491
   },
   {
     "type": "transcript",
@@ -127,7 +127,7 @@
     "id": "banter-10",
     "p": 0.05,
     "passed": false,
-    "ms": 0.04219999999997981
+    "ms": 0.05289999999999395
   },
   {
     "type": "transcript",
@@ -140,7 +140,7 @@
     "id": "true-01",
     "p": 0.99,
     "passed": true,
-    "ms": 0.02209999999999468
+    "ms": 0.03100000000000591
   },
   {
     "type": "evidence",
@@ -148,7 +148,7 @@
     "url": "https://www.britannica.com/place/Paris",
     "title": "Paris",
     "highlight": "Paris is the capital of France.",
-    "ms": 0.12639999999998963
+    "ms": 0.21100000000001273
   },
   {
     "type": "verdict",
@@ -156,7 +156,7 @@
     "verdict": "CONFIRMED",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.25509999999999877
+    "totalMs": 0.43619999999998527
   },
   {
     "type": "transcript",
@@ -169,7 +169,7 @@
     "id": "true-02",
     "p": 0.99,
     "passed": true,
-    "ms": 0.024699999999995725
+    "ms": 0.026499999999998636
   },
   {
     "type": "evidence",
@@ -177,7 +177,7 @@
     "url": "https://www.deutschland.de/en/germany-facts-information-figures-worth-knowing",
     "title": "Germany facts",
     "highlight": "Berlin is the capital of Germany.",
-    "ms": 0.025000000000005684
+    "ms": 0.02800000000002001
   },
   {
     "type": "verdict",
@@ -185,7 +185,7 @@
     "verdict": "CONFIRMED",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.07580000000001519
+    "totalMs": 0.08500000000000796
   },
   {
     "type": "transcript",
@@ -198,7 +198,7 @@
     "id": "true-03",
     "p": 0.99,
     "passed": true,
-    "ms": 0.012599999999991951
+    "ms": 0.013999999999981583
   },
   {
     "type": "evidence",
@@ -206,7 +206,7 @@
     "url": "https://www.nasa.gov/mission/apollo-11/",
     "title": "Apollo 11",
     "highlight": "Apollo 11 landed on the Moon in 1969.",
-    "ms": 0.016999999999995907
+    "ms": 0.01669999999998595
   },
   {
     "type": "verdict",
@@ -214,7 +214,7 @@
     "verdict": "CONFIRMED",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.048599999999993315
+    "totalMs": 0.05449999999999022
   },
   {
     "type": "transcript",
@@ -227,7 +227,7 @@
     "id": "true-04",
     "p": 0.99,
     "passed": true,
-    "ms": 0.011399999999980537
+    "ms": 0.013799999999974943
   },
   {
     "type": "evidence",
@@ -235,7 +235,7 @@
     "url": "https://science.nasa.gov/moon/",
     "title": "Earth's Moon",
     "highlight": "Earth has one natural moon.",
-    "ms": 0.01279999999999859
+    "ms": 0.020799999999979946
   },
   {
     "type": "verdict",
@@ -243,7 +243,7 @@
     "verdict": "CONFIRMED",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.04269999999999641
+    "totalMs": 0.06059999999999377
   },
   {
     "type": "transcript",
@@ -256,7 +256,7 @@
     "id": "true-05",
     "p": 0.99,
     "passed": true,
-    "ms": 0.010199999999997544
+    "ms": 0.01279999999999859
   },
   {
     "type": "evidence",
@@ -264,7 +264,7 @@
     "url": "https://www.nhm.ac.uk/discover/octopuses-keep-surprising-us-here-are-eight-examples-how.html",
     "title": "Octopus facts",
     "highlight": "An octopus has three hearts.",
-    "ms": 0.012299999999981992
+    "ms": 0.01660000000001105
   },
   {
     "type": "verdict",
@@ -272,7 +272,7 @@
     "verdict": "CONFIRMED",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.03829999999999245
+    "totalMs": 0.04999999999998295
   },
   {
     "type": "transcript",
@@ -285,7 +285,7 @@
     "id": "true-06",
     "p": 0.99,
     "passed": true,
-    "ms": 0.010500000000007503
+    "ms": 0.01300000000000523
   },
   {
     "type": "evidence",
@@ -293,7 +293,7 @@
     "url": "https://www.un.org/en/about-us/history-of-the-un",
     "title": "History of the UN",
     "highlight": "The United Nations was founded in 1945.",
-    "ms": 0.012400000000013733
+    "ms": 0.015500000000002956
   },
   {
     "type": "verdict",
@@ -301,7 +301,7 @@
     "verdict": "CONFIRMED",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.03819999999998913
+    "totalMs": 0.0484000000000151
   },
   {
     "type": "transcript",
@@ -314,7 +314,7 @@
     "id": "true-07",
     "p": 0.99,
     "passed": true,
-    "ms": 0.01809999999997558
+    "ms": 0.018999999999977035
   },
   {
     "type": "evidence",
@@ -322,7 +322,7 @@
     "url": "https://www.nasa.gov/mission/apollo-11/",
     "title": "Apollo 11",
     "highlight": "Apollo 11 landed on the Moon in 1969.",
-    "ms": 0.017300000000005866
+    "ms": 0.018699999999995498
   },
   {
     "type": "verdict",
@@ -330,7 +330,7 @@
     "verdict": "CONFIRMED",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.056200000000018235
+    "totalMs": 0.06289999999998486
   },
   {
     "type": "transcript",
@@ -343,7 +343,7 @@
     "id": "true-08",
     "p": 0.99,
     "passed": true,
-    "ms": 0.010699999999985721
+    "ms": 0.015500000000002956
   },
   {
     "type": "evidence",
@@ -351,7 +351,7 @@
     "url": "https://www.britannica.com/science/triangle",
     "title": "Triangle",
     "highlight": "A triangle has three sides.",
-    "ms": 0.012499999999988631
+    "ms": 0.04630000000000223
   },
   {
     "type": "verdict",
@@ -359,7 +359,7 @@
     "verdict": "CONFIRMED",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.03879999999998063
+    "totalMs": 0.08619999999999095
   },
   {
     "type": "transcript",
@@ -372,7 +372,7 @@
     "id": "false-01",
     "p": 0.99,
     "passed": true,
-    "ms": 0.012000000000000455
+    "ms": 0.014299999999991542
   },
   {
     "type": "evidence",
@@ -380,7 +380,7 @@
     "url": "https://www.deutschland.de/en/germany-facts-information-figures-worth-knowing",
     "title": "Germany facts",
     "highlight": "Berlin is the capital of Germany.",
-    "ms": 0.021399999999999864
+    "ms": 0.030400000000014415
   },
   {
     "type": "verdict",
@@ -388,7 +388,7 @@
     "verdict": "CONTRADICTED",
     "confidence": 0.99,
     "spoken": true,
-    "totalMs": 0.05639999999999645
+    "totalMs": 0.07959999999999923
   },
   {
     "type": "transcript",
@@ -401,7 +401,7 @@
     "id": "false-02",
     "p": 0.99,
     "passed": true,
-    "ms": 0.02719999999999345
+    "ms": 0.03450000000000841
   },
   {
     "type": "evidence",
@@ -409,7 +409,7 @@
     "url": "https://www.nasa.gov/mission/apollo-11/",
     "title": "Apollo 11",
     "highlight": "Apollo 11 landed on the Moon in 1969.",
-    "ms": 0.05359999999998877
+    "ms": 0.07030000000000314
   },
   {
     "type": "verdict",
@@ -417,7 +417,7 @@
     "verdict": "CONTRADICTED",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.11939999999998463
+    "totalMs": 0.175200000000018
   },
   {
     "type": "transcript",
@@ -430,7 +430,7 @@
     "id": "false-03",
     "p": 0.99,
     "passed": true,
-    "ms": 0.02220000000002642
+    "ms": 0.026700000000005275
   },
   {
     "type": "evidence",
@@ -438,7 +438,7 @@
     "url": "https://science.nasa.gov/moon/",
     "title": "Earth's Moon",
     "highlight": "Earth has one natural moon.",
-    "ms": 0.0181999999999789
+    "ms": 0.02230000000000132
   },
   {
     "type": "verdict",
@@ -446,7 +446,7 @@
     "verdict": "CONTRADICTED",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.06720000000001392
+    "totalMs": 0.11480000000000246
   },
   {
     "type": "transcript",
@@ -459,7 +459,7 @@
     "id": "false-04",
     "p": 0.99,
     "passed": true,
-    "ms": 0.015500000000002956
+    "ms": 0.019599999999996953
   },
   {
     "type": "evidence",
@@ -467,7 +467,7 @@
     "url": "https://www.nhm.ac.uk/discover/octopuses-keep-surprising-us-here-are-eight-examples-how.html",
     "title": "Octopus facts",
     "highlight": "An octopus has three hearts.",
-    "ms": 0.015899999999987813
+    "ms": 0.01989999999997849
   },
   {
     "type": "verdict",
@@ -475,7 +475,7 @@
     "verdict": "CONTRADICTED",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.05020000000001801
+    "totalMs": 0.06780000000000541
   },
   {
     "type": "transcript",
@@ -488,7 +488,7 @@
     "id": "false-05",
     "p": 0.99,
     "passed": true,
-    "ms": 0.012500000000017053
+    "ms": 0.02549999999999386
   },
   {
     "type": "evidence",
@@ -496,7 +496,7 @@
     "url": "https://www.un.org/en/about-us/history-of-the-un",
     "title": "History of the UN",
     "highlight": "The United Nations was founded in 1945.",
-    "ms": 0.013299999999986767
+    "ms": 0.017500000000012506
   },
   {
     "type": "verdict",
@@ -504,7 +504,7 @@
     "verdict": "CONTRADICTED",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.04179999999999495
+    "totalMs": 0.07099999999999795
   },
   {
     "type": "transcript",
@@ -517,7 +517,7 @@
     "id": "false-06",
     "p": 0.99,
     "passed": true,
-    "ms": 0.01120000000000232
+    "ms": 0.01650000000000773
   },
   {
     "type": "evidence",
@@ -525,7 +525,7 @@
     "url": "https://www.britannica.com/science/triangle",
     "title": "Triangle",
     "highlight": "A triangle has three sides.",
-    "ms": 0.011400000000008959
+    "ms": 0.015399999999999636
   },
   {
     "type": "verdict",
@@ -533,7 +533,7 @@
     "verdict": "CONTRADICTED",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.03640000000001464
+    "totalMs": 0.052199999999999136
   },
   {
     "type": "transcript",
@@ -546,7 +546,7 @@
     "id": "false-07",
     "p": 0.99,
     "passed": true,
-    "ms": 0.012499999999988631
+    "ms": 0.017399999999980764
   },
   {
     "type": "evidence",
@@ -554,7 +554,7 @@
     "url": "https://www.britannica.com/place/Paris",
     "title": "Paris",
     "highlight": "Paris is the capital of France.",
-    "ms": 0.011899999999997135
+    "ms": 0.01630000000000109
   },
   {
     "type": "verdict",
@@ -562,7 +562,7 @@
     "verdict": "CONTRADICTED",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.039900000000017144
+    "totalMs": 0.057800000000014506
   },
   {
     "type": "transcript",
@@ -575,7 +575,7 @@
     "id": "false-08",
     "p": 0.99,
     "passed": true,
-    "ms": 0.015199999999992997
+    "ms": 0.03479999999998995
   },
   {
     "type": "evidence",
@@ -583,7 +583,7 @@
     "url": "https://www.nasa.gov/mission/apollo-11/",
     "title": "Apollo 11",
     "highlight": "Apollo 11 landed on the Moon in 1969.",
-    "ms": 0.012599999999991951
+    "ms": 0.05179999999998586
   },
   {
     "type": "verdict",
@@ -591,7 +591,7 @@
     "verdict": "CONTRADICTED",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.05520000000001346
+    "totalMs": 0.14799999999999613
   },
   {
     "type": "transcript",
@@ -602,17 +602,9 @@
   {
     "type": "gate",
     "id": "unclear-01",
-    "p": 0.99,
-    "passed": true,
-    "ms": 0.012499999999988631
-  },
-  {
-    "type": "verdict",
-    "id": "unclear-01",
-    "verdict": "UNCLEAR",
-    "confidence": 0,
-    "spoken": false,
-    "totalMs": 0.27709999999999013
+    "p": 0.05,
+    "passed": false,
+    "ms": 0.02410000000000423
   },
   {
     "type": "transcript",
@@ -625,7 +617,7 @@
     "id": "unclear-02",
     "p": 0.99,
     "passed": true,
-    "ms": 0.02600000000001046
+    "ms": 0.017699999999990723
   },
   {
     "type": "evidence",
@@ -633,7 +625,7 @@
     "url": "https://www.deutschland.de/en/germany-facts-information-figures-worth-knowing",
     "title": "Germany facts",
     "highlight": "Berlin is the capital of Germany and home to nearly four million people.",
-    "ms": 0.05099999999998772
+    "ms": 0.019300000000015416
   },
   {
     "type": "verdict",
@@ -641,7 +633,7 @@
     "verdict": "UNCLEAR",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.13740000000001373
+    "totalMs": 0.09970000000001278
   },
   {
     "type": "transcript",
@@ -654,7 +646,7 @@
     "id": "unclear-03",
     "p": 0.99,
     "passed": true,
-    "ms": 0.012499999999988631
+    "ms": 0.03540000000000987
   },
   {
     "type": "evidence",
@@ -662,7 +654,7 @@
     "url": "https://www.britannica.com/science/gold-chemical-element",
     "title": "Gold",
     "highlight": "Gold is a precious metallic element.",
-    "ms": 0.014100000000013324
+    "ms": 0.01839999999998554
   },
   {
     "type": "verdict",
@@ -670,7 +662,7 @@
     "verdict": "UNCLEAR",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.04529999999999745
+    "totalMs": 0.08689999999998577
   },
   {
     "type": "transcript",
@@ -683,7 +675,7 @@
     "id": "unclear-04",
     "p": 0.99,
     "passed": true,
-    "ms": 0.017799999999994043
+    "ms": 0.8362999999999943
   },
   {
     "type": "evidence",
@@ -691,7 +683,7 @@
     "url": "https://www.britannica.com/place/Paris",
     "title": "Paris",
     "highlight": "Paris is the capital of France.",
-    "ms": 0.013399999999990087
+    "ms": 0.057799999999986085
   },
   {
     "type": "verdict",
@@ -699,6 +691,6 @@
     "verdict": "UNCLEAR",
     "confidence": 0.99,
     "spoken": false,
-    "totalMs": 0.04480000000000928
+    "totalMs": 0.9295000000000186
   }
 ]
