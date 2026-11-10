@@ -1,0 +1,704 @@
+[
+  {
+    "type": "transcript",
+    "id": "banter-01",
+    "text": "I really love this podcast.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "banter-01",
+    "p": 0.05,
+    "passed": false,
+    "ms": 0.41859999999999786
+  },
+  {
+    "type": "transcript",
+    "id": "banter-02",
+    "text": "Could you pass me the microphone?",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "banter-02",
+    "p": 0.05,
+    "passed": false,
+    "ms": 0.05570000000000164
+  },
+  {
+    "type": "transcript",
+    "id": "banter-03",
+    "text": "This is the best song ever.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "banter-03",
+    "p": 0.05,
+    "passed": false,
+    "ms": 0.03900000000001569
+  },
+  {
+    "type": "transcript",
+    "id": "banter-04",
+    "text": "I think it will rain tomorrow.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "banter-04",
+    "p": 0.05,
+    "passed": false,
+    "ms": 0.04810000000000514
+  },
+  {
+    "type": "transcript",
+    "id": "banter-05",
+    "text": "My coffee tastes terrible today.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "banter-05",
+    "p": 0.05,
+    "passed": false,
+    "ms": 0.07400000000001228
+  },
+  {
+    "type": "transcript",
+    "id": "banter-06",
+    "text": "I went for a walk this morning.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "banter-06",
+    "p": 0.05,
+    "passed": false,
+    "ms": 0.02939999999998122
+  },
+  {
+    "type": "transcript",
+    "id": "banter-07",
+    "text": "That joke was out of this world.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "banter-07",
+    "p": 0.05,
+    "passed": false,
+    "ms": 0.07869999999999777
+  },
+  {
+    "type": "transcript",
+    "id": "banter-08",
+    "text": "What is the capital of Germany?",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "banter-08",
+    "p": 0.05,
+    "passed": false,
+    "ms": 0.04460000000000264
+  },
+  {
+    "type": "transcript",
+    "id": "banter-09",
+    "text": "I would love to visit the Moon someday.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "banter-09",
+    "p": 0.05,
+    "passed": false,
+    "ms": 0.03909999999999059
+  },
+  {
+    "type": "transcript",
+    "id": "banter-10",
+    "text": "You should listen to more jazz.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "banter-10",
+    "p": 0.05,
+    "passed": false,
+    "ms": 0.04219999999997981
+  },
+  {
+    "type": "transcript",
+    "id": "true-01",
+    "text": "Paris is the capital of France.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "true-01",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.02209999999999468
+  },
+  {
+    "type": "evidence",
+    "id": "true-01",
+    "url": "https://www.britannica.com/place/Paris",
+    "title": "Paris",
+    "highlight": "Paris is the capital of France.",
+    "ms": 0.12639999999998963
+  },
+  {
+    "type": "verdict",
+    "id": "true-01",
+    "verdict": "CONFIRMED",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.25509999999999877
+  },
+  {
+    "type": "transcript",
+    "id": "true-02",
+    "text": "Berlin is the capital of Germany.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "true-02",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.024699999999995725
+  },
+  {
+    "type": "evidence",
+    "id": "true-02",
+    "url": "https://www.deutschland.de/en/germany-facts-information-figures-worth-knowing",
+    "title": "Germany facts",
+    "highlight": "Berlin is the capital of Germany.",
+    "ms": 0.025000000000005684
+  },
+  {
+    "type": "verdict",
+    "id": "true-02",
+    "verdict": "CONFIRMED",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.07580000000001519
+  },
+  {
+    "type": "transcript",
+    "id": "true-03",
+    "text": "Apollo 11 landed on the Moon in 1969.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "true-03",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.012599999999991951
+  },
+  {
+    "type": "evidence",
+    "id": "true-03",
+    "url": "https://www.nasa.gov/mission/apollo-11/",
+    "title": "Apollo 11",
+    "highlight": "Apollo 11 landed on the Moon in 1969.",
+    "ms": 0.016999999999995907
+  },
+  {
+    "type": "verdict",
+    "id": "true-03",
+    "verdict": "CONFIRMED",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.048599999999993315
+  },
+  {
+    "type": "transcript",
+    "id": "true-04",
+    "text": "Earth has one natural moon.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "true-04",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.011399999999980537
+  },
+  {
+    "type": "evidence",
+    "id": "true-04",
+    "url": "https://science.nasa.gov/moon/",
+    "title": "Earth's Moon",
+    "highlight": "Earth has one natural moon.",
+    "ms": 0.01279999999999859
+  },
+  {
+    "type": "verdict",
+    "id": "true-04",
+    "verdict": "CONFIRMED",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.04269999999999641
+  },
+  {
+    "type": "transcript",
+    "id": "true-05",
+    "text": "An octopus has three hearts.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "true-05",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.010199999999997544
+  },
+  {
+    "type": "evidence",
+    "id": "true-05",
+    "url": "https://www.nhm.ac.uk/discover/octopuses-keep-surprising-us-here-are-eight-examples-how.html",
+    "title": "Octopus facts",
+    "highlight": "An octopus has three hearts.",
+    "ms": 0.012299999999981992
+  },
+  {
+    "type": "verdict",
+    "id": "true-05",
+    "verdict": "CONFIRMED",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.03829999999999245
+  },
+  {
+    "type": "transcript",
+    "id": "true-06",
+    "text": "The United Nations was founded in 1945.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "true-06",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.010500000000007503
+  },
+  {
+    "type": "evidence",
+    "id": "true-06",
+    "url": "https://www.un.org/en/about-us/history-of-the-un",
+    "title": "History of the UN",
+    "highlight": "The United Nations was founded in 1945.",
+    "ms": 0.012400000000013733
+  },
+  {
+    "type": "verdict",
+    "id": "true-06",
+    "verdict": "CONFIRMED",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.03819999999998913
+  },
+  {
+    "type": "transcript",
+    "id": "true-07",
+    "text": "It landed on the Moon in 1969.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "true-07",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.01809999999997558
+  },
+  {
+    "type": "evidence",
+    "id": "true-07",
+    "url": "https://www.nasa.gov/mission/apollo-11/",
+    "title": "Apollo 11",
+    "highlight": "Apollo 11 landed on the Moon in 1969.",
+    "ms": 0.017300000000005866
+  },
+  {
+    "type": "verdict",
+    "id": "true-07",
+    "verdict": "CONFIRMED",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.056200000000018235
+  },
+  {
+    "type": "transcript",
+    "id": "true-08",
+    "text": "A triangle has three sides.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "true-08",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.010699999999985721
+  },
+  {
+    "type": "evidence",
+    "id": "true-08",
+    "url": "https://www.britannica.com/science/triangle",
+    "title": "Triangle",
+    "highlight": "A triangle has three sides.",
+    "ms": 0.012499999999988631
+  },
+  {
+    "type": "verdict",
+    "id": "true-08",
+    "verdict": "CONFIRMED",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.03879999999998063
+  },
+  {
+    "type": "transcript",
+    "id": "false-01",
+    "text": "Paris is the capital of Germany.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "false-01",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.012000000000000455
+  },
+  {
+    "type": "evidence",
+    "id": "false-01",
+    "url": "https://www.deutschland.de/en/germany-facts-information-figures-worth-knowing",
+    "title": "Germany facts",
+    "highlight": "Berlin is the capital of Germany.",
+    "ms": 0.021399999999999864
+  },
+  {
+    "type": "verdict",
+    "id": "false-01",
+    "verdict": "CONTRADICTED",
+    "confidence": 0.99,
+    "spoken": true,
+    "totalMs": 0.05639999999999645
+  },
+  {
+    "type": "transcript",
+    "id": "false-02",
+    "text": "Apollo 11 landed on the Moon in 1972.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "false-02",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.02719999999999345
+  },
+  {
+    "type": "evidence",
+    "id": "false-02",
+    "url": "https://www.nasa.gov/mission/apollo-11/",
+    "title": "Apollo 11",
+    "highlight": "Apollo 11 landed on the Moon in 1969.",
+    "ms": 0.05359999999998877
+  },
+  {
+    "type": "verdict",
+    "id": "false-02",
+    "verdict": "CONTRADICTED",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.11939999999998463
+  },
+  {
+    "type": "transcript",
+    "id": "false-03",
+    "text": "Earth has two natural moons.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "false-03",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.02220000000002642
+  },
+  {
+    "type": "evidence",
+    "id": "false-03",
+    "url": "https://science.nasa.gov/moon/",
+    "title": "Earth's Moon",
+    "highlight": "Earth has one natural moon.",
+    "ms": 0.0181999999999789
+  },
+  {
+    "type": "verdict",
+    "id": "false-03",
+    "verdict": "CONTRADICTED",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.06720000000001392
+  },
+  {
+    "type": "transcript",
+    "id": "false-04",
+    "text": "An octopus has one heart.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "false-04",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.015500000000002956
+  },
+  {
+    "type": "evidence",
+    "id": "false-04",
+    "url": "https://www.nhm.ac.uk/discover/octopuses-keep-surprising-us-here-are-eight-examples-how.html",
+    "title": "Octopus facts",
+    "highlight": "An octopus has three hearts.",
+    "ms": 0.015899999999987813
+  },
+  {
+    "type": "verdict",
+    "id": "false-04",
+    "verdict": "CONTRADICTED",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.05020000000001801
+  },
+  {
+    "type": "transcript",
+    "id": "false-05",
+    "text": "The United Nations was founded in 1955.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "false-05",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.012500000000017053
+  },
+  {
+    "type": "evidence",
+    "id": "false-05",
+    "url": "https://www.un.org/en/about-us/history-of-the-un",
+    "title": "History of the UN",
+    "highlight": "The United Nations was founded in 1945.",
+    "ms": 0.013299999999986767
+  },
+  {
+    "type": "verdict",
+    "id": "false-05",
+    "verdict": "CONTRADICTED",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.04179999999999495
+  },
+  {
+    "type": "transcript",
+    "id": "false-06",
+    "text": "A triangle has four sides.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "false-06",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.01120000000000232
+  },
+  {
+    "type": "evidence",
+    "id": "false-06",
+    "url": "https://www.britannica.com/science/triangle",
+    "title": "Triangle",
+    "highlight": "A triangle has three sides.",
+    "ms": 0.011400000000008959
+  },
+  {
+    "type": "verdict",
+    "id": "false-06",
+    "verdict": "CONTRADICTED",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.03640000000001464
+  },
+  {
+    "type": "transcript",
+    "id": "false-07",
+    "text": "Berlin is the capital of France.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "false-07",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.012499999999988631
+  },
+  {
+    "type": "evidence",
+    "id": "false-07",
+    "url": "https://www.britannica.com/place/Paris",
+    "title": "Paris",
+    "highlight": "Paris is the capital of France.",
+    "ms": 0.011899999999997135
+  },
+  {
+    "type": "verdict",
+    "id": "false-07",
+    "verdict": "CONTRADICTED",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.039900000000017144
+  },
+  {
+    "type": "transcript",
+    "id": "false-08",
+    "text": "It landed on the Moon in 1972.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "false-08",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.015199999999992997
+  },
+  {
+    "type": "evidence",
+    "id": "false-08",
+    "url": "https://www.nasa.gov/mission/apollo-11/",
+    "title": "Apollo 11",
+    "highlight": "Apollo 11 landed on the Moon in 1969.",
+    "ms": 0.012599999999991951
+  },
+  {
+    "type": "verdict",
+    "id": "false-08",
+    "verdict": "CONTRADICTED",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.05520000000001346
+  },
+  {
+    "type": "transcript",
+    "id": "unclear-01",
+    "text": "The population of this city doubled last year.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "unclear-01",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.012499999999988631
+  },
+  {
+    "type": "verdict",
+    "id": "unclear-01",
+    "verdict": "UNCLEAR",
+    "confidence": 0,
+    "spoken": false,
+    "totalMs": 0.27709999999999013
+  },
+  {
+    "type": "transcript",
+    "id": "unclear-02",
+    "text": "The current population of Berlin is exactly 4000000.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "unclear-02",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.02600000000001046
+  },
+  {
+    "type": "evidence",
+    "id": "unclear-02",
+    "url": "https://www.deutschland.de/en/germany-facts-information-figures-worth-knowing",
+    "title": "Germany facts",
+    "highlight": "Berlin is the capital of Germany and home to nearly four million people.",
+    "ms": 0.05099999999998772
+  },
+  {
+    "type": "verdict",
+    "id": "unclear-02",
+    "verdict": "UNCLEAR",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.13740000000001373
+  },
+  {
+    "type": "transcript",
+    "id": "unclear-03",
+    "text": "The current price of gold is exactly 3000 dollars per ounce.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "unclear-03",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.012499999999988631
+  },
+  {
+    "type": "evidence",
+    "id": "unclear-03",
+    "url": "https://www.britannica.com/science/gold-chemical-element",
+    "title": "Gold",
+    "highlight": "Gold is a precious metallic element.",
+    "ms": 0.014100000000013324
+  },
+  {
+    "type": "verdict",
+    "id": "unclear-03",
+    "verdict": "UNCLEAR",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.04529999999999745
+  },
+  {
+    "type": "transcript",
+    "id": "unclear-04",
+    "text": "Paris is the capital of France and has exactly 5000000 residents today.",
+    "final": true
+  },
+  {
+    "type": "gate",
+    "id": "unclear-04",
+    "p": 0.99,
+    "passed": true,
+    "ms": 0.017799999999994043
+  },
+  {
+    "type": "evidence",
+    "id": "unclear-04",
+    "url": "https://www.britannica.com/place/Paris",
+    "title": "Paris",
+    "highlight": "Paris is the capital of France.",
+    "ms": 0.013399999999990087
+  },
+  {
+    "type": "verdict",
+    "id": "unclear-04",
+    "verdict": "UNCLEAR",
+    "confidence": 0.99,
+    "spoken": false,
+    "totalMs": 0.04480000000000928
+  }
+]

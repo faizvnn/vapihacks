@@ -1,5 +1,48 @@
 # Jamie — Live Podcast Fact Checker: Build Plan
 
+## Part 2 implementation snapshot
+
+Part 2 is implemented as a TypeScript pipeline with Jev/Exa adapters, bounded concurrency,
+cancellation, deduplication, a correction policy, `POST /debug/sentence`, and WS `/live`.
+Part 1's audio loop and Part 3's dashboard are not implemented in this branch.
+
+Requires Node 22+ and npm. Put `TYPESAFE_API_KEY` and `EXA_API_KEY` in local `.env`
+(see `.env.example`; `.env` is ignored by Git).
+
+```powershell
+npm install
+npm run typecheck
+npm test
+npm run build
+npm run fixtures
+npm run dev
+```
+
+The server listens on `http://127.0.0.1:3000` by default. To submit a sentence from another terminal:
+
+```powershell
+Invoke-RestMethod -Method Post -Uri http://127.0.0.1:3000/debug/sentence -ContentType 'application/json' -Body '{"text":"Paris is the capital of Germany."}'
+```
+
+Consume events at `ws://127.0.0.1:3000/live`. `/health` is liveness; `/ready` reports
+provider warm-up status. Real speech requires injecting Part 1's `say(text)` into
+`createApp` in `server/src/app.ts`; the standalone server never pretends to have spoken.
+Use its `pipeline.onSentence` facade for transcripts and `resetSession()` before each new call.
+
+Verification at this snapshot: typecheck/build pass, 22 pipeline tests pass, and all 30
+synthetic fixture expectations pass. Mock fixtures verify orchestration, not model accuracy.
+`npm run fixtures` writes a synthetic replay to `fixtures/events.json` for Part 3.
+Local reports go to ignored `outputs/`.
+
+Live spike: Exa authenticated and returned a highlight (first search approximately 1.4 s).
+Jev gate and verdict both returned HTTP 403; live accuracy, threshold tuning, and the
+sub-second latency target remain unverified. Server/WebSocket and adapter integration
+tests are still pending. Run `npm run spike` to recheck provider access, or
+`npm run fixtures -- --live --demo` for the three initial demo fixtures once access works.
+The runner uses a mock speaker in both modes and never dispatches real audio.
+
+---
+
 A silent voice agent sits in on a live conversation. Every finished sentence is gated by
 Jev ("is this a checkable claim?"), checked against Exa, and judged by Jev again. Confirmed
 claims flash a green citation card; contradicted claims flash red **and Jamie speaks up**.
@@ -22,21 +65,22 @@ mic -> Vapi (Deepgram Nova-3) -> final transcript webhook -> sentence
 | Assistant "muted on start" | Vapi has no listen-only mode. A normal assistant answers every turn. | Point the assistant's model at **our own `custom-llm` endpoint that returns an empty reply**. All speech goes through `say`. |
 | Read `controlUrl` from the call | Documented for phone calls (`call.monitor.controlUrl` on the first `status-update: in-progress` webhook, or `GET /call/:id`). **Not confirmed for web calls.** | Part 1's first spike. Fallback chain in Part 1. |
 | Jev threshold `0.85` for everything | A noul returns one probability. A choice returns a label, per-option probabilities and a separate `confidence`. Thresholds do not carry over between the two. | Tune each on fixtures. 0.85 is only a starting guess. |
-| Exa "lite ~450ms" | `type: "lite"` exists (low latency, served from index, limited params). No latency number in the docs. | Measure it. Fall back to `auto` if highlights come back empty. |
+| Exa "lite ~450ms" | `type: "lite"` exists (low latency, served from index, limited params). No latency number in the docs. | Measure it. Return `UNCLEAR` on missing highlights; evaluate `auto` separately after integration. |
 | Jev never gets it wrong | Vendor's own benchmark is about 68% accuracy; latency claim is 70–500 ms. | Voice interrupt only on a confident CONTRADICTED. Everything else is a card. |
 
 Jev facts we rely on: model `jev-1.13.0`, key in `TYPESAFE_API_KEY`, several questions per
 request, 80 req/s limit. Python SDK is confirmed (`pip install typesafe-sdk`,
 `client.system_one(state=..., questions={...})`, answer at `response.answers[name].noul`).
-A JavaScript SDK page exists at docs.typesafe.ai/sdk/javascript; package name not confirmed.
+The official JavaScript SDK is [`@typesafe-ai/sdk`](https://github.com/typesafe-ai/typesafe-sdk-js/blob/main/README.md)
+and requires Node 22+. Its `systemOne` method supports the gate and choice verdict in TypeScript.
 
 ---
 
 ## 1. Shared contract (agree in the first 15 minutes, then split)
 
-Stack: Node 20 + TypeScript, Fastify, `ws`, Vite + React, ngrok. One server process, in-memory
-state, no database. (If the Jev JS SDK does not work within 15 minutes, the backend moves to
-Python + FastAPI. Decide once, early.)
+Stack: Node 22+ with TypeScript, Fastify, `ws`, Vite + React, ngrok. One server process, in-memory
+state, no database. The official Jev JS SDK is `@typesafe-ai/sdk` and requires Node 22+;
+see the [Part 2 architecture](docs/part-2-architecture.md) for verified sources and integration decisions.
 
 ```
 server/src/
@@ -119,6 +163,9 @@ finishing them, Jamie never talks unprompted, and `curl -X POST /debug/say` make
 ## 3. Part 2 — Fact-check brain (Jev + Exa)
 
 **Owner delivers:** `pipeline.onSentence`, tuned on fixtures, with latency logged per stage.
+
+Implementation design: [Part 2 architecture](docs/part-2-architecture.md), including module
+boundaries, cancellation, evidence attribution, speech policy, and fixture acceptance criteria.
 
 1. **Gate (`jev.ts`).** One request, state = `{ sentence, context }`, one noul `is_claim`:
    "The speaker states a specific factual or statistical claim that could be verified against a
