@@ -6,55 +6,150 @@
     n        goes up by one on every check, so a change in n means a new result
     verdict  CONFIRMED | CONTRADICTED | UNCLEAR | NOT_A_CLAIM
   POST /check {"text": "..."} runs a check without audio (the text box below uses it).
+  GET /config returns { publicKey, assistantId } for the Vapi call behind the mic button.
 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Jamie</title>
+<title>Jamie — live fact checker</title>
 <style>
-  body { margin: 0; height: 100vh; display: grid; place-items: center; text-align: center;
-         background: #222; color: #fff; font: 32px system-ui, sans-serif; transition: background 0.3s; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; grid-template-rows: auto 1fr auto;
+         background: #1b1b1f; color: #fff; font: 18px/1.4 system-ui, sans-serif;
+         text-align: center; transition: background 0.25s; overflow-x: hidden; }
   body.CONFIRMED { background: #12803c; }
   body.CONTRADICTED { background: #c0262d; }
-  form { position: fixed; bottom: 20px; }
-  input, button { font-size: 16px; padding: 8px 12px; }
+  body.UNCLEAR { background: #4a4a55; }
+
+  header { padding: 20px 16px 0; opacity: 0.85; }
+  header b { font-size: 22px; letter-spacing: 0.02em; }
+  header span { display: block; font-size: 14px; opacity: 0.7; }
+
+  main { display: grid; place-content: center; gap: 14px; padding: 16px; }
+  #stamp { font-size: clamp(64px, 20vw, 220px); font-weight: 900; line-height: 0.95;
+           letter-spacing: -0.03em; text-transform: uppercase; }
+  .idle #stamp { font-size: clamp(28px, 6vw, 56px); font-weight: 700; letter-spacing: 0; opacity: 0.55;
+                 text-transform: none; }
+  .CONTRADICTED #stamp { animation: slam 0.35s cubic-bezier(.2, 2.2, .4, 1), shake 0.5s 0.3s; }
+  .CONFIRMED #stamp, .UNCLEAR #stamp { animation: slam 0.3s ease-out; }
+  @keyframes slam { from { transform: scale(3) rotate(-8deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-18px) rotate(-2deg); }
+                     40%, 80% { transform: translateX(18px) rotate(2deg); } }
+  @media (prefers-reduced-motion: reduce) { #stamp { animation: none !important; } }
+
+  #claim { font-size: clamp(18px, 3vw, 30px); max-width: 28ch; margin: 0 auto; }
+  #claim:not(:empty)::before { content: "\201C"; } #claim:not(:empty)::after { content: "\201D"; }
+  #say { font-size: clamp(18px, 2.6vw, 26px); font-weight: 600; max-width: 34ch; margin: 0 auto; }
+  #source { color: inherit; font-size: 16px; opacity: 0.85; }
+  #source:empty, #say:empty, #claim:empty { display: none; }
+
+  footer { padding: 16px; display: grid; gap: 10px; justify-items: center; }
+  #heard { font-size: 14px; opacity: 0.6; min-height: 1.4em; max-width: 60ch; }
+  form { display: flex; gap: 8px; width: min(560px, 100%); }
+  input, button { font: inherit; font-size: 16px; padding: 12px 14px; border-radius: 10px; border: 0; }
+  input { flex: 1; min-width: 0; }
+  button { cursor: pointer; font-weight: 700; background: #fff; color: #1b1b1f; white-space: nowrap; }
+  #mic.live { background: #111; color: #fff; outline: 2px solid #fff; }
+  #mic:disabled { opacity: 0.6; cursor: wait; }
 </style>
 </head>
-<body>
-  <div>
-    <div id="claim"></div>
-    <div id="source"></div>
-  </div>
+<body class="idle">
+  <header><b>Jamie</b><span>Say a fact out loud. Get it wrong and Jamie will let you know.</span></header>
 
-  <form id="typed">
-    <button type="button" id="start">Start</button>
-    <input id="text" placeholder="type a claim, press Enter">
-  </form>
+  <main>
+    <div id="stamp">Go on. Say something.</div>
+    <div id="claim"></div>
+    <div id="say"></div>
+    <a id="source" target="_blank" rel="noopener"></a>
+  </main>
+
+  <footer>
+    <div id="heard"></div>
+    <form id="typed">
+      <button type="button" id="mic">🎙 Start talking</button>
+      <input id="text" placeholder="or type a claim, press Enter" autocomplete="off">
+    </form>
+  </footer>
 
 <script type="module">
-let seen = 0;
+const $ = (id) => document.getElementById(id);
+const STAMPS = { CONFIRMED: "True", CONTRADICTED: "Wrong!", UNCLEAR: "Hmm…" };
+const IDLE_STAMP = $("stamp").textContent;
+
+let seen = null;        // n of the last result shown; null until the first poll
+let resetTimer;
+let audio;              // AudioContext, created on the first click or keypress
+let vapi = null;        // the Vapi client while a call is live
+
+function show(result) {
+  seen = result.n;
+  if (!STAMPS[result.verdict]) return;                 // NOT_A_CLAIM: stay as we are
+  document.body.className = "";                        // restart the animation
+  void document.body.offsetWidth;
+  document.body.className = result.verdict;
+  $("stamp").textContent = STAMPS[result.verdict];
+  $("claim").textContent = result.claim || "";
+  $("say").textContent = result.verdict === "CONTRADICTED" ? result.say || "" : "";
+  const isUrl = /^https?:\/\//.test(result.source || "");
+  $("source").textContent = isUrl ? "Source: " + new URL(result.source).hostname.replace(/^www\./, "") : "";
+  if (isUrl) $("source").href = result.source; else $("source").removeAttribute("href");
+  if (result.verdict === "CONTRADICTED") scream(result.say);
+  clearTimeout(resetTimer);
+  resetTimer = setTimeout(reset, result.verdict === "CONTRADICTED" ? 9000 : 5000);
+}
+
+function reset() {
+  document.body.className = "idle";
+  $("stamp").textContent = IDLE_STAMP;
+  for (const id of ["claim", "say", "source"]) $(id).textContent = "";
+}
+
+// A buzzer, then a shouted "WRONG!". The correction itself is spoken by Jamie over the Vapi call;
+// with no call running (typed claims) the browser reads it out instead.
+function scream(correction) {
+  try {
+    audio ??= new AudioContext();
+    const now = audio.currentTime, osc = audio.createOscillator(), gain = audio.createGain();
+    osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(140, now);
+    osc.frequency.linearRampToValueAtTime(90, now + 0.5);
+    gain.gain.setValueAtTime(0.6, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+    osc.connect(gain).connect(audio.destination);
+    osc.start(now); osc.stop(now + 0.55);
+  } catch {}
+  if (!window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const shout = new SpeechSynthesisUtterance("WRONG!");
+  shout.volume = 1; shout.rate = 0.9; shout.pitch = 0.6;
+  speechSynthesis.speak(shout);
+  if (!vapi && correction) speechSynthesis.speak(new SpeechSynthesisUtterance(correction));
+}
 
 async function poll() {
-  const result = await (await fetch("/last")).json();
-  if (result.n > seen) {
-    seen = result.n;
-    document.body.className = result.verdict;
-    document.getElementById("claim").textContent = result.claim;
-    document.getElementById("source").textContent = result.source;
-    // TODO(Person 3): bigger text, source as a link, fade back to grey after a few seconds
-  }
+  try {
+    const result = await (await fetch("/last")).json();
+    if (seen === null) seen = result.n;                // don't replay an old result on page load
+    else if (result.n > seen) show(result);
+  } catch {}
 }
 setInterval(poll, 300);
+poll();
 
-document.getElementById("typed").addEventListener("submit", async (event) => {
+$("typed").addEventListener("submit", async (event) => {
   event.preventDefault();
-  const input = document.getElementById("text");
-  await fetch("/check", { method: "POST", headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ text: input.value }) });
-  input.value = "";
+  audio ??= new AudioContext();
+  const text = $("text").value.trim();
+  if (!text) return;
+  $("text").value = "";
+  const response = await fetch("/check", { method: "POST", headers: { "Content-Type": "application/json" },
+                                           body: JSON.stringify({ text }) });
+  const result = await response.json();
+  if (seen === null || result.n > seen) show(result);
 });
 
+<<<<<<< Updated upstream
 document.getElementById("start").addEventListener("click", async () => {
   const { publicKey, assistantId } = await (await fetch("/config")).json();
   const { default: Vapi } = await import("https://esm.sh/@vapi-ai/web");
@@ -63,7 +158,38 @@ document.getElementById("start").addEventListener("click", async () => {
   window.vapi.on("error", (e) => console.error("vapi error", e));
   await window.vapi.start(assistantId || assistant);
   document.getElementById("start").textContent = "Live";
+=======
+$("mic").addEventListener("click", async () => {
+  audio ??= new AudioContext();
+  if (vapi) { vapi.stop(); return; }
+  $("mic").disabled = true;
+  try {
+    const { publicKey, assistantId } = await (await fetch("/config")).json();
+    if (!publicKey || !assistantId) throw new Error("Voice isn't set up yet. Type a claim instead.");
+    const module = await import("https://esm.sh/@vapi-ai/web");
+    const Vapi = module.default?.default ?? module.default;
+    const client = new Vapi(publicKey);
+    client.on("call-start", () => { vapi = client; micState("■ Stop", true); $("heard").textContent = "Listening…"; });
+    client.on("call-end", () => { vapi = null; micState("🎙 Start talking", false); $("heard").textContent = ""; });
+    client.on("error", (error) => { vapi = null; micState("🎙 Start talking", false);
+                                    $("heard").textContent = "Call failed: " + (error?.error?.message || error?.message || "see console");
+                                    console.error(error); });
+    client.on("message", (message) => {
+      if (message.type === "transcript" && message.role === "user") $("heard").textContent = "Heard: " + message.transcript;
+    });
+    $("heard").textContent = "Connecting…";
+    await client.start(assistantId);
+  } catch (error) {
+    $("heard").textContent = error.message;
+  }
+  $("mic").disabled = false;
+>>>>>>> Stashed changes
 });
+
+function micState(label, live) {
+  $("mic").textContent = label;
+  $("mic").classList.toggle("live", live);
+}
 </script>
 </body>
 </html>
