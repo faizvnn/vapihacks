@@ -1,5 +1,30 @@
 # Jamie — Live Podcast Fact Checker
 
+## Integrated TypeScript server (Parts 1 and 2)
+
+The fact-check branch is merged alongside the Python application below. To run the
+TypeScript voice loop with the real Jev/Exa pipeline, use the repository root:
+
+```powershell
+npm ci
+npm run dev
+```
+
+Configure the root `.env` from `.env.example`, including the Jev/Exa keys and Vapi
+settings. Existing `server/.env` values are also loaded, with root `.env` taking
+precedence. The TypeScript server defaults to `http://127.0.0.1:8787`; `/test` retains
+the Part 1 browser voice test. `/debug/sentence` and WS `/live` use the real Part 2
+pipeline. Call boundaries reset/cancel its session. Existing `server/` npm commands
+delegate to the root package; run `npm ci` at the root first. `npm start` requires
+`npm run build`.
+
+The Python application/UI and its `check.py` scaffold are preserved below as a separate
+entrypoint on port 8000; it does not automatically invoke the TypeScript pipeline.
+See [Part 2 integration/validation](docs/part-2-integration.md) and the
+[Part 2 build plan](docs/part-2-build-plan.md) for commands, fixtures, and live limitations.
+
+## Python application
+
 Say a claim into the mic. The screen turns green if the web backs it up and red if it doesn't.
 On red, Jamie says the correction out loud.
 

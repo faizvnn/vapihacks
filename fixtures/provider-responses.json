@@ -1,0 +1,28 @@
+{
+  "description": "Synthetic provider responses for orchestration checks. These are not recorded live results or evidence of model accuracy. Source links identify the intended topics; excerpts are hand-authored fixture text.",
+  "banterProbability": 0.05,
+  "claimProbability": 0.99,
+  "verdictConfidence": 0.99,
+  "evidenceById": {
+    "true-01": { "url": "https://www.britannica.com/place/Paris", "title": "Paris", "highlight": "Paris is the capital of France." },
+    "true-02": { "url": "https://www.deutschland.de/en/germany-facts-information-figures-worth-knowing", "title": "Germany facts", "highlight": "Berlin is the capital of Germany." },
+    "true-03": { "url": "https://www.nasa.gov/mission/apollo-11/", "title": "Apollo 11", "highlight": "Apollo 11 landed on the Moon in 1969." },
+    "true-04": { "url": "https://science.nasa.gov/moon/", "title": "Earth's Moon", "highlight": "Earth has one natural moon." },
+    "true-05": { "url": "https://www.nhm.ac.uk/discover/octopuses-keep-surprising-us-here-are-eight-examples-how.html", "title": "Octopus facts", "highlight": "An octopus has three hearts." },
+    "true-06": { "url": "https://www.un.org/en/about-us/history-of-the-un", "title": "History of the UN", "highlight": "The United Nations was founded in 1945." },
+    "true-07": { "url": "https://www.nasa.gov/mission/apollo-11/", "title": "Apollo 11", "highlight": "Apollo 11 landed on the Moon in 1969." },
+    "true-08": { "url": "https://www.britannica.com/science/triangle", "title": "Triangle", "highlight": "A triangle has three sides." },
+    "false-01": { "url": "https://www.deutschland.de/en/germany-facts-information-figures-worth-knowing", "title": "Germany facts", "highlight": "Berlin is the capital of Germany." },
+    "false-02": { "url": "https://www.nasa.gov/mission/apollo-11/", "title": "Apollo 11", "highlight": "Apollo 11 landed on the Moon in 1969." },
+    "false-03": { "url": "https://science.nasa.gov/moon/", "title": "Earth's Moon", "highlight": "Earth has one natural moon." },
+    "false-04": { "url": "https://www.nhm.ac.uk/discover/octopuses-keep-surprising-us-here-are-eight-examples-how.html", "title": "Octopus facts", "highlight": "An octopus has three hearts." },
+    "false-05": { "url": "https://www.un.org/en/about-us/history-of-the-un", "title": "History of the UN", "highlight": "The United Nations was founded in 1945." },
+    "false-06": { "url": "https://www.britannica.com/science/triangle", "title": "Triangle", "highlight": "A triangle has three sides." },
+    "false-07": { "url": "https://www.britannica.com/place/Paris", "title": "Paris", "highlight": "Paris is the capital of France." },
+    "false-08": { "url": "https://www.nasa.gov/mission/apollo-11/", "title": "Apollo 11", "highlight": "Apollo 11 landed on the Moon in 1969." },
+    "unclear-01": null,
+    "unclear-02": { "url": "https://www.deutschland.de/en/germany-facts-information-figures-worth-knowing", "title": "Germany facts", "highlight": "Berlin is the capital of Germany and home to nearly four million people." },
+    "unclear-03": { "url": "https://www.britannica.com/science/gold-chemical-element", "title": "Gold", "highlight": "Gold is a precious metallic element." },
+    "unclear-04": { "url": "https://www.britannica.com/place/Paris", "title": "Paris", "highlight": "Paris is the capital of France." }
+  }
+}

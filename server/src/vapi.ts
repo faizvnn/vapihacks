@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
-import { emit } from "./bus.js";
+import { emit as sharedEmit } from "./bus.js";
 import { SentenceSplitter } from "./sentences.js";
-import type { Sentence } from "./types.js";
+import type { Event, Sentence } from "./types.js";
 
 const PUBLIC_URL = (process.env.PUBLIC_URL ?? "").replace(/\/$/, "");
 const VAPI_PRIVATE_KEY = process.env.VAPI_PRIVATE_KEY ?? "";
@@ -19,18 +19,16 @@ const state = {
 };
 const seenFinals = new Map<string, number>(); // dedupe webhook + client copies of the same final
 
-// Late import avoids a circular-import crash (pipeline imports say from here).
-let onSentence: (s: Sentence) => void = () => {};
-import("./pipeline.js").then((m) => {
-  onSentence = (s) => {
-    m.pipeline.onSentence(s).catch((err) => console.error("[pipeline] error", err));
-  };
-});
+// The entrypoint supplies the real pipeline before listening; no circular import is needed.
+let emit: (event: Event) => void = sharedEmit;
+let onSentence: (s: Sentence) => Promise<void> = async () => {};
+let onCallStarted = () => {};
+let onCallEnded = () => {};
 
 const splitter = new SentenceSplitter((s) => {
   console.log(`[sentence ${s.id}] +${Date.now() - state.lastFinalAt}ms  "${s.text}"`);
   emit({ type: "transcript", id: s.id, text: s.text, final: true });
-  onSentence(s);
+  void onSentence(s).catch(() => console.error("[pipeline] failed to process sentence"));
 });
 
 // ---------- assistant config (transient, used by vapi.start) ----------
@@ -128,7 +126,11 @@ function handleMessage(msg: any, source: "webhook" | "client") {
         emit({ type: "call", status: "in-progress", control: !!state.controlUrl });
         if (!state.controlUrl) void tryFetchControlUrl();
       }
-      if (msg.status === "ended") emit({ type: "call", status: "ended", control: false });
+      if (msg.status === "ended") {
+        onCallEnded();
+        splitter.reset();
+        emit({ type: "call", status: "ended", control: false });
+      }
       break;
 
     case "speech-update":
@@ -168,6 +170,7 @@ function handleMessage(msg: any, source: "webhook" | "client") {
 }
 
 function newCall(callId: string) {
+  onCallStarted();
   console.log(`[call] new call ${callId}`);
   state.callId = callId;
   state.controlUrl = null;
@@ -180,7 +183,17 @@ function newCall(callId: string) {
 }
 
 // ---------- routes ----------
-export function registerVapiRoutes(app: FastifyInstance) {
+export function registerVapiRoutes(app: FastifyInstance, options: {
+  onSentence?: (s: Sentence) => Promise<void>;
+  onCallStarted?: () => void;
+  onCallEnded?: () => void;
+  publish?: (event: Event) => void;
+  debugSentence?: boolean;
+} = {}) {
+  onSentence = options.onSentence ?? (async () => {});
+  onCallStarted = options.onCallStarted ?? (() => {});
+  onCallEnded = options.onCallEnded ?? (() => {});
+  emit = options.publish ?? sharedEmit;
   // Config the browser passes to vapi.start(). Public key is safe to expose.
   app.get("/assistant", async () => ({ publicKey: VAPI_PUBLIC_KEY, assistant: assistantConfig() }));
 
@@ -247,7 +260,7 @@ export function registerVapiRoutes(app: FastifyInstance) {
     await say((req.body as any)?.text ?? "Quick correction. This is a test.");
     return { ok: true, controlUrl: !!state.controlUrl, source: state.controlSource };
   });
-  app.post("/debug/sentence", async (req) => {
+  if (options.debugSentence !== false) app.post("/debug/sentence", async (req) => {
     const text = String((req.body as any)?.text ?? "").trim();
     if (text) {
       state.lastFinalAt = Date.now();
