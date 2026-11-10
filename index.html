@@ -1,0 +1,65 @@
+<!doctype html>
+<!--
+  Person 3 owns this file.
+
+  CONTRACT: GET /last returns { n, verdict, claim, say, source }.
+    n        goes up by one on every check, so a change in n means a new result
+    verdict  CONFIRMED | CONTRADICTED | UNCLEAR | NOT_A_CLAIM
+  POST /check {"text": "..."} runs a check without audio (the text box below uses it).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jamie</title>
+<style>
+  body { margin: 0; height: 100vh; display: grid; place-items: center; text-align: center;
+         background: #222; color: #fff; font: 32px system-ui, sans-serif; transition: background 0.3s; }
+  body.CONFIRMED { background: #12803c; }
+  body.CONTRADICTED { background: #c0262d; }
+  form { position: fixed; bottom: 20px; }
+  input, button { font-size: 16px; padding: 8px 12px; }
+</style>
+</head>
+<body>
+  <div>
+    <div id="claim"></div>
+    <div id="source"></div>
+  </div>
+
+  <form id="typed">
+    <button type="button" id="start">Start</button>
+    <input id="text" placeholder="type a claim, press Enter">
+  </form>
+
+<script type="module">
+let seen = 0;
+
+async function poll() {
+  const result = await (await fetch("/last")).json();
+  if (result.n > seen) {
+    seen = result.n;
+    document.body.className = result.verdict;
+    document.getElementById("claim").textContent = result.claim;
+    document.getElementById("source").textContent = result.source;
+    // TODO(Person 3): bigger text, source as a link, fade back to grey after a few seconds
+  }
+}
+setInterval(poll, 300);
+
+document.getElementById("typed").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const input = document.getElementById("text");
+  await fetch("/check", { method: "POST", headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ text: input.value }) });
+  input.value = "";
+});
+
+document.getElementById("start").addEventListener("click", async () => {
+  const { publicKey, assistantId } = await (await fetch("/config")).json();
+  // TODO(Person 1): start the Vapi call with @vapi-ai/web:  new Vapi(publicKey).start(assistantId)
+  console.log("Start clicked", { publicKey, assistantId });
+});
+</script>
+</body>
+</html>
