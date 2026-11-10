@@ -3,7 +3,18 @@
 Say a claim into the mic. The screen turns green if the web backs it up and red if it doesn't.
 On red, Jamie says the correction out loud.
 
-One-hour build, three people, two files.
+One-hour build, three people, one file each.
+
+## Run it
+
+```bash
+pip install -r requirements.txt
+cp .env.example .env
+uvicorn server:app --reload --port 8000
+```
+
+Open http://localhost:8000 and type a sentence containing "false" or "true". The scaffold is
+stubs only: each file has a `CONTRACT` header and `TODO(Person N)` markers.
 
 ## How it works
 
@@ -26,10 +37,21 @@ No webhooks, no `controlUrl`, no WebSocket, no database.
 ## Files
 
 ```
-server.py    FastAPI: POST /chat/completions, GET /last, serves index.html
-index.html   Start button, full-screen colour, the claim and its source in big text
-.env         VAPI_PUBLIC_KEY, TYPESAFE_API_KEY, EXA_API_KEY
+server.py    Person 1. FastAPI: POST /chat/completions, POST /check, GET /last, GET /config
+check.py     Person 2. check(text) -> CheckResult
+index.html   Person 3. Start button, full-screen colour, the claim and its source in big text
+.env         VAPI_PUBLIC_KEY, VAPI_ASSISTANT_ID, TYPESAFE_API_KEY, EXA_API_KEY
 ```
+
+## Contracts between the parts
+
+| Contract | Shape | Who relies on it |
+| --- | --- | --- |
+| `check(text)` | returns `{verdict, claim, say, source}` | `server.py` calls it |
+| `POST /chat/completions` | Vapi sends the conversation; we reply with `say` (empty = silent) | Vapi |
+| `POST /check {"text"}` | returns the same result, no audio | text box, command-line testing |
+| `GET /last` | the latest result plus `n`, a counter that goes up per check | `index.html` polls it |
+| `GET /config` | `{publicKey, assistantId}` | Start button |
 
 Python, because Jev's Python SDK is the one we know works (`pip install typesafe-sdk`).
 
@@ -47,15 +69,18 @@ Person 2 writes it. Person 1 calls it. Person 3 displays what it returned.
 
 ### Person 1 — Vapi
 
-- `ngrok http 8000`, and a Start button that calls `vapi.start(...)` from `@vapi-ai/web`:
+- `ngrok http 8000`, then create a **stored** assistant in the Vapi dashboard (or `POST
+  https://api.vapi.ai/assistant` with the private key) and put its id in `.env`. Vapi answers 403
+  if a web call passes a custom LLM URL inline, so the config cannot live in the browser:
   ```js
   {
     transcriber: { provider: "deepgram", model: "nova-3", language: "en" },
     voice: { provider: "deepgram", model: "aura-2", voiceId: "thalia" },   // confirm the voice id
-    model: { provider: "custom-llm", url: "<ngrok url>", model: "jamie" },
+    model: { provider: "custom-llm", url: "<ngrok url>", model: "jamie" }, // Vapi calls <url>/chat/completions
     firstMessageMode: "assistant-waits-for-user",
   }
   ```
+- The Start button calls `new Vapi(publicKey).start(assistantId)` from `@vapi-ai/web`.
 - `POST /chat/completions`: take the last `user` message, call `check()`, save the result for
   `/last`, and stream back `result["say"]` in OpenAI format:
   ```
