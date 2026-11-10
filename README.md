@@ -1,160 +1,106 @@
-# Jamie — Live Podcast Fact Checker
+<div align="center">
 
-## Integrated TypeScript server (Parts 1 and 2)
+# Jamie
 
-The fact-check branch is merged alongside the Python application below. To run the
-TypeScript voice loop with the real Jev/Exa pipeline, use the repository root:
+**A live fact checker that sits in on your conversation.**
 
-```powershell
-npm ci
-npm run dev
-```
+Say a claim out loud. Jamie checks it against the live web in about a second.<br>
+True: the screen turns green. False: the screen turns red and Jamie corrects you with a source.
 
-Configure the root `.env` from `.env.example`, including the Jev/Exa keys and Vapi
-settings. Existing `server/.env` values are also loaded, with root `.env` taking
-precedence. The TypeScript server defaults to `http://127.0.0.1:8787`; `/test` retains
-the Part 1 browser voice test. `/debug/sentence` and WS `/live` use the real Part 2
-pipeline. Call boundaries reset/cancel its session. Existing `server/` npm commands
-delegate to the root package; run `npm ci` at the root first. `npm start` requires
-`npm run build`.
+[![Watch the demo](docs/demo-poster.jpg)](docs/demo.mp4)
 
-The Python application/UI and its `check.py` fact-check implementation are preserved below as a separate
-entrypoint on port 8000; it does not automatically invoke the TypeScript pipeline.
-See [Part 2 integration/validation](docs/part-2-integration.md) and the
-[Part 2 build plan](docs/part-2-build-plan.md) for commands, fixtures, and live limitations.
+▶ [Watch the 28-second demo](docs/demo.mp4)
 
-## Python application
+Built at the Side Quest Hotline Vapi Hackathon · Vapi HQ, San Francisco · Nov 2026
 
-Say a claim into the mic. The screen turns green if the web backs it up and red if it doesn't.
-On red, Jamie says the correction out loud.
+</div>
 
-One-hour build, three people, one file each.
+---
 
-## Run it
+## Why
 
-```bash
-pip install -r requirements.txt
-cp .env.example .env
-uvicorn server:app --reload --port 8000
-```
+Normal voice agents are built for one person talking to one bot. Put one in a room with two people and it answers every pause, and each web lookup leaves three seconds of silence.
 
-Open http://localhost:8000 and type a sentence containing "false" or "true". The scaffold is
-stubs only: each file has a `CONTRACT` header and `TODO(Person N)` markers.
+Jamie works differently. It is a **silent third participant**. It stays quiet during normal conversation, shows a source on screen when you say something true, and only speaks up when you say something false.
+
+## Use cases
+
+- **Podcasts and live streams:** live citations for the audience, without stopping the host
+- **Debates and panels:** call out wrong numbers the moment they're said
+- **Meetings and sales calls:** catch a wrong stat before it ends up in the deck
+- **Classrooms and study groups:** quick, sourced corrections in plain speech
 
 ## How it works
 
-Vapi runs the mic call and transcribes with Deepgram. We register our own server as Vapi's LLM.
-Each time the speaker pauses, Vapi sends us what they said. We check it and reply with either
-nothing (Jamie stays silent) or one correction sentence (Vapi speaks it).
-
 ```
-mic -> Vapi (Deepgram Nova-3) -> POST /chat/completions on our server
-   1. Jev yes/no:  is this a checkable claim?        no -> reply ""   screen grey
-   2. Exa search:  top highlight + URL
-   3. Jev choice:  CONFIRMED / CONTRADICTED / UNCLEAR
-        CONFIRMED    -> reply ""                     screen green
-        CONTRADICTED -> reply one correction line    screen red, Jamie speaks (Deepgram Aura-2)
-        UNCLEAR      -> reply ""                     screen grey
+mic ─▶ Vapi (Deepgram Nova-3 STT) ─▶ POST /chat/completions  (our server is Vapi's "LLM")
+                                         │
+                                         ├─ 1. Jev gate      is this a checkable factual claim?   no ─▶ stay silent
+                                         ├─ 2. Exa search    top 3 live web results + highlights
+                                         ├─ 3. Jev verdict   CONFIRMED / CONTRADICTED / UNCLEAR
+                                         └─ 4. Jev pick      best evidence sentence to read out
+                                         │
+              screen ◀─ GET /last ───────┤   green · red · grey
+              speaker ◀─ streamed reply ─┘   only on CONTRADICTED (Deepgram TTS)
 ```
 
-No webhooks, no `controlUrl`, no WebSocket, no database.
+- **No generative LLM anywhere in the loop.** Jev, a discriminative model from TypeSafe, decides whether something is a claim and judges it against the evidence, so there's no free-text generation and no hallucinated corrections.
+- **Silent by default.** Our endpoint returns an empty completion unless the claim is contradicted, so Vapi only speaks when there's a correction to make.
+- **The correction comes from the source.** Jamie reads the evidence sentence that best states the right fact: *"Quick correction. According to science.nasa.gov, …"*
+- **Fails safe.** Any timeout or error resolves to `UNCLEAR` and never to "true." Thresholds: gate ≥ 0.7, verdict ≥ 0.8, spoken line ≥ 0.5.
+- **Fast.** The Jev and Exa connections are warmed up at boot and reused. Exa runs in `fast` mode, about 350 ms.
 
-## Files
+## Stack
 
-```
-server.py    Person 1. FastAPI: POST /chat/completions, POST /check, GET /last, GET /config
-check.py     Person 2. check(text) -> CheckResult
-index.html   Person 3. Start button, full-screen colour, the claim and its source in big text
-.env         VAPI_PUBLIC_KEY, VAPI_ASSISTANT_ID, TYPESAFE_API_KEY, EXA_API_KEY
-```
-
-## Contracts between the parts
-
-| Contract | Shape | Who relies on it |
-| --- | --- | --- |
-| `check(text)` | returns `{verdict, claim, say, source}` | `server.py` calls it |
-| `POST /chat/completions` | Vapi sends the conversation; we reply with `say` (empty = silent) | Vapi |
-| `POST /check {"text"}` | returns the same result, no audio | text box, command-line testing |
-| `GET /last` | the latest result plus `n`, a counter that goes up per check | `index.html` polls it |
-| `GET /config` | `{publicKey, assistantId}` | Start button |
-
-Python, because Jev's Python SDK is the one we know works (`pip install typesafe-sdk`).
-
-## The one thing to agree on
-
-```python
-async def check(text: str) -> dict:
-    # {"verdict": "CONFIRMED" | "CONTRADICTED" | "UNCLEAR" | "NOT_A_CLAIM",
-    #  "claim": text, "say": "" or one sentence, "source": url or ""}
-```
-
-Person 2 writes it. Person 1 calls it. Person 3 displays what it returned.
-
-## Who does what
-
-### Person 1 — Vapi
-
-- `ngrok http 8000`, then create a **stored** assistant in the Vapi dashboard (or `POST
-  https://api.vapi.ai/assistant` with the private key) and put its id in `.env`. Vapi answers 403
-  if a web call passes a custom LLM URL inline, so the config cannot live in the browser:
-  ```js
-  {
-    transcriber: { provider: "deepgram", model: "nova-3", language: "en" },
-    voice: { provider: "deepgram", model: "aura-2", voiceId: "thalia" },   // confirm the voice id
-    model: { provider: "custom-llm", url: "<ngrok url>", model: "jamie" }, // Vapi calls <url>/chat/completions
-    firstMessageMode: "assistant-waits-for-user",
-  }
-  ```
-- The Start button calls `new Vapi(publicKey).start(assistantId)` from `@vapi-ai/web`.
-- `POST /chat/completions`: take the last `user` message, call `check()`, save the result for
-  `/last`, and stream back `result["say"]` in OpenAI format:
-  ```
-  data: {"choices":[{"index":0,"delta":{"content":"<say>"}}]}
-  data: {"choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}
-  data: [DONE]
-  ```
-- Start with a stub `check()` that only speaks when the sentence contains "test".
-
-### Person 2 — `check()`
-
-- **Gate.** One Jev noul on the sentence: "The speaker states a specific factual or statistical
-  claim that could be verified against a public source." Under 0.8, return `NOT_A_CLAIM`.
-- **Search.** `POST https://api.exa.ai/search`, header `x-api-key`, body
-  `{"query": text, "type": "lite", "numResults": 3, "contents": {"highlights": true}}`.
-  Keep the first highlight and URL.
-- **Verdict.** One Jev choice on `{claim, evidence}` with options CONFIRMED, CONTRADICTED, UNCLEAR.
-- **Line.** On CONTRADICTED: `"Quick correction. According to <domain>, <first sentence of highlight>."`
-- Build and test it from the command line with six sentences. No audio needed.
-
-### Person 3 — Screen and demo
-
-- `index.html`: poll `GET /last` every 300 ms. Grey when idle, green on CONFIRMED, red on
-  CONTRADICTED. Show the claim and the source domain in large text. Fade back to grey after 5 s.
-- Collect the three API keys into `.env`.
-- Pick the three demo lines and test each one against Exa: some banter (stays grey), a true stat
-  (green), a well-known false claim (red, Jamie speaks).
-- Record one clean run as a backup.
-
-## The hour
-
-| Time | What |
+| Layer | Tech |
 | --- | --- |
-| 0:00–0:05 | Agree on `check()`, share keys, start ngrok |
-| 0:05–0:35 | Build the three pieces in parallel |
-| 0:35–0:50 | Plug `check()` into the endpoint, run it with real audio |
-| 0:50–1:00 | Rehearse the three demo lines, record the backup |
+| Voice call, turn-taking | [Vapi](https://vapi.ai) web SDK, custom-LLM provider |
+| Speech-to-text / TTS | [Deepgram](https://deepgram.com) Nova-3 / Aura |
+| Claim gate + verdict | [TypeSafe Jev](https://typesafe.ai) (`noul` + `choice`) |
+| Live web evidence | [Exa](https://exa.ai) search with highlights |
+| Server | Python 3.10+, FastAPI, httpx |
+| UI | Single `index.html`, polls `/last` |
 
-## Check in the first 10 minutes
+## Run it
 
-- An empty reply from our endpoint keeps Jamie silent. (Person 1)
-- One Jev noul call returns a probability. (Person 2)
-- One Exa `lite` call returns highlights. If it doesn't, use `"type": "auto"`. (Person 2)
+**Requirements:** Python 3.10+, plus API keys for Vapi (public), Exa, and TypeSafe.
 
-## If something doesn't cooperate
+```bash
+pip install -r requirements.txt
+cp .env.example .env               # add VAPI_PUBLIC_KEY, EXA_API_KEY, TYPESAFE_API_KEY
+npx cloudflared tunnel --url http://localhost:8000   # copy the https URL into PUBLIC_URL
+uvicorn server:app --port 8000
+```
 
-- **Custom LLM endpoint won't work:** read transcripts in the browser from the Web SDK `message`
-  event, POST them to a `/check` route, and on red speak with the Web SDK's `say` (check its README
-  for the exact call).
-- **Jev's verdict is unreliable:** swap that one step for an LLM call. Keep Jev as the gate.
-- **Audio fails on stage:** a text box that posts a sentence to `/check` still turns the screen
-  green or red.
+Open **http://localhost:8000**, click **Start**, allow the mic, and say something like *"The Eiffel Tower is 500 meters tall."*
+
+You can also test without a mic:
+
+```bash
+python check.py "The Sun is a planet."
+curl -X POST localhost:8000/check -H 'content-type: application/json' -d '{"text":"Water boils at 50 degrees Celsius."}'
+```
+
+## API
+
+| Route | Purpose |
+| --- | --- |
+| `POST /chat/completions` | Vapi custom-LLM endpoint. Streams back the correction, or nothing |
+| `POST /check` `{text}` | Run a check without audio. Returns `{verdict, claim, say, source}` |
+| `GET /last` | Latest result plus a counter `n`. The UI polls this |
+| `GET /config` | Vapi public key and inline assistant config for the Start button |
+
+## Repo layout
+
+```
+server.py      FastAPI server: Vapi endpoint, /check, /last, /config
+check.py       Fact-check pipeline: Jev gate → Exa → Jev verdict → correction line
+index.html     Full-screen verdict UI + Vapi Start button
+server/        TypeScript voice loop (ambient mode: webhooks, controlUrl barge-in, echo guard)
+fixtures/      Labelled test sentences and recorded provider responses
+docs/          Architecture, integration notes, demo video
+```
+
+## Team
+
+Faizan Hussain · Jorge Meza · and team
