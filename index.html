@@ -81,12 +81,23 @@ let seen = null;        // n of the last result shown; null until the first poll
 let resetTimer;
 let audio;              // AudioContext, created on the first click or keypress
 let vapi = null;        // the Vapi client while a call is live
+let lastHeard = "";     // latest thing the speaker said on the call
+let wrongFromVoice = false;  // that red came from Jamie's voice, not from /last
+let relay = false;      // local-only call: Vapi just listens, this page sends what it heard to /check
+let deafUntil = 0;      // ignore the mic until then, so the browser's own voice isn't fact-checked
 
 function show(result) {
+  const fromVoice = result.n === seen;                 // built from the call transcript, not from the server
   seen = result.n;
   if (!STAMPS[result.verdict]) return;                 // NOT_A_CLAIM: stay as we are
-  document.body.className = "";                        // restart the animation
-  void document.body.offsetWidth;
+  const wrong = result.verdict === "CONTRADICTED";
+  // The server's result for a correction Jamie's voice already put on screen: fill in the details, don't re-scream.
+  const repeat = wrong && !fromVoice && wrongFromVoice && document.body.className === "CONTRADICTED";
+  if (wrong) wrongFromVoice = fromVoice;
+  if (!repeat) {
+    document.body.className = "";                      // restart the animation
+    void document.body.offsetWidth;
+  }
   document.body.className = result.verdict;
   $("stamp").textContent = STAMPS[result.verdict];
   $("claim").textContent = result.claim || "";
@@ -94,9 +105,9 @@ function show(result) {
   const isUrl = /^https?:\/\//.test(result.source || "");
   $("source").textContent = isUrl ? "Source: " + new URL(result.source).hostname.replace(/^www\./, "") : "";
   if (isUrl) $("source").href = result.source; else $("source").removeAttribute("href");
-  if (result.verdict === "CONTRADICTED") scream(result.say);
+  if (wrong && !repeat) scream(result.say);
   clearTimeout(resetTimer);
-  resetTimer = setTimeout(reset, result.verdict === "CONTRADICTED" ? 9000 : 5000);
+  resetTimer = setTimeout(reset, wrong ? 9000 : 5000);
 }
 
 function reset() {
@@ -123,8 +134,9 @@ function scream(correction) {
   speechSynthesis.cancel();
   const shout = new SpeechSynthesisUtterance("WRONG!");
   shout.volume = 1; shout.rate = 0.9; shout.pitch = 0.6;
-  speechSynthesis.speak(shout);
-  if (!vapi && correction) speechSynthesis.speak(new SpeechSynthesisUtterance(correction));
+  const lines = [shout];
+  if ((!vapi || relay) && correction) lines.push(new SpeechSynthesisUtterance(correction));
+  for (const line of lines) { line.onend = () => { deafUntil = Date.now() + 700; }; speechSynthesis.speak(line); }
 }
 
 async function poll() {
@@ -143,47 +155,63 @@ $("typed").addEventListener("submit", async (event) => {
   const text = $("text").value.trim();
   if (!text) return;
   $("text").value = "";
+  await checkText(text);
+});
+
+async function checkText(text) {
   const response = await fetch("/check", { method: "POST", headers: { "Content-Type": "application/json" },
                                            body: JSON.stringify({ text }) });
   const result = await response.json();
   if (seen === null || result.n > seen) show(result);
-});
+}
 
-<<<<<<< Updated upstream
-document.getElementById("start").addEventListener("click", async () => {
-  const { publicKey, assistantId } = await (await fetch("/config")).json();
-  const { default: Vapi } = await import("https://esm.sh/@vapi-ai/web");
-  const { assistant } = await (await fetch("/config")).json();
-  window.vapi = new Vapi(publicKey);
-  window.vapi.on("error", (e) => console.error("vapi error", e));
-  await window.vapi.start(assistantId || assistant);
-  document.getElementById("start").textContent = "Live";
-=======
 $("mic").addEventListener("click", async () => {
   audio ??= new AudioContext();
   if (vapi) { vapi.stop(); return; }
   $("mic").disabled = true;
   try {
-    const { publicKey, assistantId } = await (await fetch("/config")).json();
-    if (!publicKey || !assistantId) throw new Error("Voice isn't set up yet. Type a claim instead.");
+    // A stored assistant id wins; otherwise the server's inline assistant, which needs PUBLIC_URL set.
+    const { publicKey, assistantId, assistant } = await (await fetch("/config")).json();
+    // No PUBLIC_URL on the server: when this page is on a public https host, Vapi can call back to it.
+    if (assistant?.model && !assistant.model.url && location.protocol === "https:") assistant.model.url = location.origin;
+    // Plain localhost, so Vapi can't call our server: it only listens and transcribes. This page sends each
+    // finished sentence to /check itself, and Vapi's own model is muted so it never talks back.
+    relay = !assistantId && !assistant.model.url;
+    if (relay) assistant.model = { provider: "openai", model: "gpt-4o-mini",
+                                   messages: [{ role: "system", content: "Reply with exactly: ok" }] };
+    const target = assistantId || assistant;
+    if (!publicKey) throw new Error("Voice needs VAPI_PUBLIC_KEY in .env. Type a claim instead.");
     const module = await import("https://esm.sh/@vapi-ai/web");
     const Vapi = module.default?.default ?? module.default;
     const client = new Vapi(publicKey);
-    client.on("call-start", () => { vapi = client; micState("■ Stop", true); $("heard").textContent = "Listening…"; });
+    const muteVapi = () => client.send({ type: "control", control: "mute-assistant" });
+    client.on("call-start", () => { vapi = client; micState("■ Stop", true); $("heard").textContent = "Listening…";
+                                    if (relay) muteVapi(); });
     client.on("call-end", () => { vapi = null; micState("🎙 Start talking", false); $("heard").textContent = ""; });
     client.on("error", (error) => { vapi = null; micState("🎙 Start talking", false);
                                     $("heard").textContent = "Call failed: " + (error?.error?.message || error?.message || "see console");
                                     console.error(error); });
     client.on("message", (message) => {
-      if (message.type === "transcript" && message.role === "user") $("heard").textContent = "Heard: " + message.transcript;
+      if (message.type !== "transcript") return;
+      if (message.role === "user") {
+        lastHeard = message.transcript; $("heard").textContent = "Heard: " + lastHeard;
+        if (!relay || message.transcriptType !== "final") return;
+        muteVapi();                                      // again, in case the first one was sent too early
+        if (!speechSynthesis.speaking && Date.now() > deafUntil) checkText(lastHeard).catch(console.error);
+      }
+      else if (relay) return;                            // Vapi's muted "ok" replies are not corrections
+      // Jamie only ever speaks a correction. If /last missed it (a serverless host can answer the poll
+      // from another instance), Jamie's own words still turn the screen red.
+      else if (message.role === "assistant" && document.body.className !== "CONTRADICTED")
+        show({ n: seen, verdict: "CONTRADICTED", claim: lastHeard, say: message.transcript, source: "" });
+      else if (message.role === "assistant" && wrongFromVoice) $("say").textContent = message.transcript;
     });
     $("heard").textContent = "Connecting…";
-    await client.start(assistantId);
+    await client.start(target);
   } catch (error) {
     $("heard").textContent = error.message;
   }
   $("mic").disabled = false;
->>>>>>> Stashed changes
 });
 
 function micState(label, live) {
