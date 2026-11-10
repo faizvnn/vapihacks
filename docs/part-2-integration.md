@@ -9,7 +9,7 @@ npm run dev
 
 Add `TYPESAFE_API_KEY` and `EXA_API_KEY` to local `.env`. All server/fixture/spike/smoke commands load it before application modules. Local values override inherited environment variables. Keep `.env` outside Git; `.env.example` lists the supported settings.
 
-After merging with Part 1, the default TypeScript port is 8787, `/test` serves the existing voice test page, and `server/src/index.ts` wires Vapi transcripts and speech to this pipeline. The loader also reads legacy `server/.env` first, then root `.env` takes precedence. The Python app/UI on port 8000 is preserved separately and still uses its own `check.py` scaffold. It does not call this TypeScript pipeline.
+After merging with Part 1, the default TypeScript port is 8787, `/test` serves the existing voice test page, and `server/src/index.ts` wires Vapi transcripts and speech to this pipeline. The loader also reads legacy `server/.env` first, then root `.env` takes precedence. The Python app/UI on port 8000 is preserved separately and uses its own `check.py` fact-check implementation from main. It does not call this TypeScript pipeline.
 
 ## Part 1 handoff
 

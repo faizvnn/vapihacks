@@ -18,7 +18,7 @@ pipeline. Call boundaries reset/cancel its session. Existing `server/` npm comma
 delegate to the root package; run `npm ci` at the root first. `npm start` requires
 `npm run build`.
 
-The Python application/UI and its `check.py` scaffold are preserved below as a separate
+The Python application/UI and its `check.py` fact-check implementation are preserved below as a separate
 entrypoint on port 8000; it does not automatically invoke the TypeScript pipeline.
 See [Part 2 integration/validation](docs/part-2-integration.md) and the
 [Part 2 build plan](docs/part-2-build-plan.md) for commands, fixtures, and live limitations.

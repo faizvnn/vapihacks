@@ -7,20 +7,30 @@ CONTRACTS (routes the other parts rely on):
   GET  /config             {"publicKey", "assistantId", "assistant"} for the Start button in index.html.
 """
 
+import asyncio
 import json
 import os
 import time
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, StreamingResponse
 
-from check import check
+from check import check, warm_up
 
 load_dotenv()
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    task = asyncio.create_task(warm_up())  # in the background, so the server starts answering straight away
+    yield
+    task.cancel()
+
+
+app = FastAPI(lifespan=lifespan)
 last_result = {"n": 0}
 
 
