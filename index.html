@@ -57,8 +57,12 @@ document.getElementById("typed").addEventListener("submit", async (event) => {
 
 document.getElementById("start").addEventListener("click", async () => {
   const { publicKey, assistantId } = await (await fetch("/config")).json();
-  // TODO(Person 1): start the Vapi call with @vapi-ai/web:  new Vapi(publicKey).start(assistantId)
-  console.log("Start clicked", { publicKey, assistantId });
+  const { default: Vapi } = await import("https://esm.sh/@vapi-ai/web");
+  const { assistant } = await (await fetch("/config")).json();
+  window.vapi = new Vapi(publicKey);
+  window.vapi.on("error", (e) => console.error("vapi error", e));
+  await window.vapi.start(assistantId || assistant);
+  document.getElementById("start").textContent = "Live";
 });
 </script>
 </body>
